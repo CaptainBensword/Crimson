@@ -12,7 +12,7 @@ The game itself is not included in this repository. Bring a clean standalone Eag
 4. Download the patched client or use the patcher's temporary launch option
 5. Back on Crimson, import the patched HTML and use **Launch Client** to keep it saved in this browser
 
-The patcher injects the EaglerLite Mod API and bundles Crimson's modules into the patched file. Open the in-game mod menu with **F6**
+The patcher injects the EaglerLite Mod API and bundles Crimson's modules into the patched file. It keeps launch settings from the original client, including configured server entries. Open the in-game mod menu with **F6**
 
 ## Included modules
 
