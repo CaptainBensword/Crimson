@@ -318,3 +318,18 @@ h1, h2, h3, p { margin-top: 0; }
   .admin-catalog-panel { position: static; }
   .admin-panel { padding: 18px; }
 }
+
+/* Music cover artwork */
+.track-cover {
+  width: 54px; height: 54px; flex: 0 0 54px; display: block;
+  object-fit: cover; object-position: center; border-radius: 5px;
+  border: 1px solid rgba(32, 26, 24, .12); background: #24201f;
+}
+.dialog-cover {
+  display: block; width: min(100%, 360px); aspect-ratio: 1; object-fit: cover;
+  object-position: center; margin: 0 auto 22px; border-radius: 7px;
+  border: 1px solid var(--line); box-shadow: 0 12px 28px rgba(25,20,18,.12);
+}
+@media (max-width: 480px) {
+  .track-cover { width: 44px; height: 44px; flex-basis: 44px; }
+}
