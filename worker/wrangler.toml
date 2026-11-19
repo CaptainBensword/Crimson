@@ -1,9 +1,0 @@
-name = "crimson-admin-api"
-main = "src/index.js"
-compatibility_date = "2026-11-19"
-
-[vars]
-REPO_OWNER = "CaptainBensword"
-REPO_NAME = "Crimson"
-REPO_BRANCH = "main"
-ALLOWED_ORIGIN = "https://captainbensword.github.io"
