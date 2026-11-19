@@ -39,7 +39,7 @@
   }
 
   function showLogin() {
-    el.loginPanel.hidden = !apiBase;
+    el.loginPanel.hidden = false;
     el.dashboard.hidden = true;
   }
 
