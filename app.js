@@ -88,7 +88,14 @@ function normalizeTrack(track) {
     }).map(function (part) { return { instrument: part.instrument, file: safeAssetPath(part.file) }; }) : [],
     files: Array.isArray(track.files) ? track.files.filter(function (file) {
       return file && typeof file.label === "string" && safeAssetPath(file.file);
-    }).map(function (file) { return { label: file.label, file: safeAssetPath(file.file) }; }) : []
+    }).map(function (file) { return { label: file.label, file: safeAssetPath(file.file) }; }) : [],
+    playback: track.playback && Array.isArray(track.playback.notes) ? {
+      bpm: Number(track.playback.bpm) > 0 ? Number(track.playback.bpm) : 112,
+      transposition: Number.isFinite(Number(track.playback.transposition)) ? Number(track.playback.transposition) : 0,
+      notes: track.playback.notes.filter(function (note) {
+        return Array.isArray(note) && typeof note[0] === "string" && Number(note[1]) > 0;
+      })
+    } : null
   };
 }
 
@@ -153,9 +160,131 @@ function renderGenres() {
   });
 }
 
+let activePlayback = null;
+
+function stopPlayback() {
+  if (!activePlayback) return;
+  const current = activePlayback;
+  activePlayback = null;
+  if (current.audio) {
+    current.audio.pause();
+    current.audio.currentTime = 0;
+  }
+  if (current.nodes) {
+    current.nodes.forEach(function (node) {
+      try { node.stop(); } catch (error) {}
+    });
+  }
+  if (current.context && current.context.state !== "closed") {
+    current.context.close().catch(function () {});
+  }
+  document.querySelectorAll(".track-listen, .preview-play").forEach(function (button) {
+    button.textContent = button.classList.contains("preview-play") ? "Listen to preview" : "Listen";
+    button.setAttribute("aria-pressed", "false");
+  });
+}
+
+function noteToMidi(noteName) {
+  const match = /^([A-G])([#b]?)(-?\\d+)$/.exec(noteName);
+  if (!match) return null;
+  const semitones = { C:0, D:2, E:4, F:5, G:7, A:9, B:11 };
+  const accidental = match[2] === "#" ? 1 : (match[2] === "b" ? -1 : 0);
+  return (Number(match[3]) + 1) * 12 + semitones[match[1]] + accidental;
+}
+
+function playTrack(track, button) {
+  if (activePlayback && activePlayback.trackId === track.id) {
+    stopPlayback();
+    return;
+  }
+  stopPlayback();
+
+  if (track.audio) {
+    const audio = new Audio(track.audio);
+    activePlayback = { trackId: track.id, audio: audio };
+    if (button) {
+      button.textContent = "Stop";
+      button.setAttribute("aria-pressed", "true");
+    }
+    audio.addEventListener("ended", stopPlayback, { once: true });
+    audio.play().catch(function () {
+      stopPlayback();
+      setText(elements.count, "Audio could not be played. Check the file format and path.");
+    });
+    return;
+  }
+
+  if (!track.playback || !track.playback.notes.length) return;
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) {
+    setText(elements.count, "This browser does not support audio playback.");
+    return;
+  }
+
+  const context = new AudioContextClass();
+  const master = context.createGain();
+  master.gain.value = 0.62;
+  master.connect(context.destination);
+
+  const real = new Float32Array(10);
+  const imag = new Float32Array(10);
+  const harmonics = [0, 1, 0.58, 0.39, 0.27, 0.17, 0.11, 0.07, 0.045, 0.025];
+  for (let i = 1; i < harmonics.length; i += 1) imag[i] = harmonics[i];
+  const hornWave = context.createPeriodicWave(real, imag);
+  const nodes = [];
+  const notes = track.playback.notes;
+  const secondsPerBeat = 60 / track.playback.bpm;
+  let cursor = context.currentTime + 0.12;
+
+  notes.forEach(function (event) {
+    const writtenMidi = noteToMidi(event[0]);
+    const duration = Number(event[1]) * secondsPerBeat;
+    if (writtenMidi === null || !Number.isFinite(duration) || duration <= 0) return;
+
+    const soundingMidi = writtenMidi + track.playback.transposition;
+    const frequency = 440 * Math.pow(2, (soundingMidi - 69) / 12);
+    const oscillator = context.createOscillator();
+    const envelope = context.createGain();
+    const filter = context.createBiquadFilter();
+
+    oscillator.setPeriodicWave(hornWave);
+    oscillator.frequency.setValueAtTime(frequency, cursor);
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(2300, cursor);
+    envelope.gain.setValueAtTime(0.0001, cursor);
+    envelope.gain.linearRampToValueAtTime(0.2, cursor + Math.min(0.075, duration * 0.28));
+    envelope.gain.setValueAtTime(0.15, Math.max(cursor + 0.08, cursor + duration - 0.09));
+    envelope.gain.exponentialRampToValueAtTime(0.0001, cursor + duration - 0.015);
+
+    oscillator.connect(filter);
+    filter.connect(envelope);
+    envelope.connect(master);
+    oscillator.start(cursor);
+    oscillator.stop(cursor + duration + 0.03);
+    nodes.push(oscillator);
+    cursor += duration;
+  });
+
+  activePlayback = { trackId: track.id, context: context, nodes: nodes };
+  if (button) {
+    button.textContent = "Stop";
+    button.setAttribute("aria-pressed", "true");
+  }
+  const finish = function () {
+    if (activePlayback && activePlayback.context === context) stopPlayback();
+  };
+  nodes.forEach(function (node) { node.addEventListener("ended", function () {
+    if (nodes.every(function (item) { return item.playbackEnded; })) finish();
+    node.playbackEnded = true;
+    if (nodes.every(function (item) { return item.playbackEnded; })) finish();
+  }); });
+}
+
 function makeTrackRow(track) {
   const item = document.createElement("li");
   item.className = "track-row";
+  const row = document.createElement("div");
+  row.className = "track-row-inner";
 
   const button = document.createElement("button");
   button.type = "button";
@@ -199,10 +328,24 @@ function makeTrackRow(track) {
 
   button.append(symbol, copy, tags, date, arrow);
   button.addEventListener("click", function () { openTrack(track); });
-  item.appendChild(button);
+  row.appendChild(button);
+
+  if (track.audio || track.playback) {
+    const listen = document.createElement("button");
+    listen.type = "button";
+    listen.className = "track-listen";
+    listen.textContent = "Listen";
+    listen.setAttribute("aria-pressed", "false");
+    listen.addEventListener("click", function (event) {
+      event.stopPropagation();
+      playTrack(track, listen);
+    });
+    row.appendChild(listen);
+  }
+
+  item.appendChild(row);
   return item;
 }
-
 function render() {
   const collection = getCollection(state.category);
   const title = collection ? collection.title : "Library";
@@ -258,6 +401,7 @@ function addAssetSection(parent, heading, content) {
 }
 
 function openTrack(track) {
+  stopPlayback();
   elements.dialogContent.replaceChildren();
 
   const title = document.createElement("h2");
@@ -286,6 +430,19 @@ function openTrack(track) {
     player.src = track.audio;
     player.setAttribute("aria-label", "Audio player for " + track.title);
     addAssetSection(elements.dialogContent, "LISTEN", player);
+  } else if (track.playback) {
+    const preview = document.createElement("div");
+    preview.className = "preview-panel";
+    const listen = document.createElement("button");
+    listen.type = "button";
+    listen.className = "asset-link preview-play";
+    listen.textContent = "Listen to preview";
+    listen.addEventListener("click", function () { playTrack(track, listen); });
+    const note = document.createElement("p");
+    note.className = "preview-note";
+    setText(note, "Synthesized from the score's note sequence. French horn tone is an electronic preview.");
+    preview.append(listen, note);
+    addAssetSection(elements.dialogContent, "LISTEN", preview);
   }
 
   if (track.score) {
@@ -332,7 +489,7 @@ function openTrack(track) {
     addAssetSection(elements.dialogContent, "FILES", links);
   }
 
-  if (!track.audio && !track.score && !track.parts.length && !track.files.length) {
+  if (!track.audio && !track.playback && !track.score && !track.parts.length && !track.files.length) {
     const note = document.createElement("p");
     note.className = "dialog-description";
     setText(note, "No audio or downloadable files have been attached to this entry.");
