@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171717">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Crimson — Admin</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script src="admin-config.js" defer></script>
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="wordmark" href="./" aria-label="Crimson home">CRIMSON</a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="nav-link" href="./">Library</a>
+        <a class="nav-link is-active" href="admin.html" aria-current="page">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="page-shell admin-page">
+    <div class="page-heading">
+      <div>
+        <p class="eyebrow">CRIMSON / TALON</p>
+        <h1>Administration</h1>
+      </div>
+      <a class="text-link" href="./">← Back to library</a>
+    </div>
+
+    <div id="admin-status" class="admin-status" role="status" aria-live="polite">
+      Checking admin connection…
+    </div>
+
+    <section id="login-panel" class="admin-panel" hidden>
+      <p class="eyebrow">PRIVATE AREA</p>
+      <h2>Admin login</h2>
+      <p class="admin-intro">Sign in to manage the Crimson music catalog and its files.</p>
+      <form id="login-form" class="admin-form">
+        <label for="admin-password">Password</label>
+        <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+        <button class="admin-primary" type="submit">Sign in</button>
+      </form>
+    </section>
+
+    <section id="dashboard" hidden>
+      <div class="admin-dashboard-heading">
+        <div>
+          <p class="eyebrow">CATALOG MANAGER</p>
+          <h2>Music library</h2>
+        </div>
+        <button id="logout-button" class="admin-secondary" type="button">Sign out</button>
+      </div>
+
+      <div class="admin-columns">
+        <section class="admin-panel">
+          <p class="eyebrow">NEW ENTRY</p>
+          <h2>Add a piece</h2>
+          <p class="admin-intro">Add the details and attach the real files. Saving publishes the entry to the public library.</p>
+
+          <form id="piece-form" class="admin-form">
+            <label for="piece-title">Title</label>
+            <input id="piece-title" name="title" type="text" maxlength="120" required>
+
+            <label for="piece-category">Collection</label>
+            <select id="piece-category" name="category" required>
+              <option value="compositions">Compositions</option>
+              <option value="sheet-music">Sheet Music</option>
+              <option value="game-music">Game Music</option>
+              <option value="podcast-video">Podcast &amp; Video</option>
+              <option value="other">Other</option>
+            </select>
+
+            <label for="piece-project">Project / series</label>
+            <input id="piece-project" name="project" type="text" maxlength="100" placeholder="Optional">
+
+            <label for="piece-date">Date</label>
+            <input id="piece-date" name="date" type="date">
+
+            <label for="piece-genres">Genres</label>
+            <input id="piece-genres" name="genres" type="text" maxlength="160" placeholder="Adventure, Orchestral">
+
+            <label for="piece-description">Description</label>
+            <textarea id="piece-description" name="description" rows="4" maxlength="1200"></textarea>
+
+            <div class="admin-file-field">
+              <label for="piece-audio">Audio recording</label>
+              <input id="piece-audio" name="audio" type="file" accept=".mp3,.wav,.ogg,.m4a,audio/*">
+              <small>MP3, WAV, OGG or M4A · maximum 8 MB</small>
+            </div>
+
+            <div class="admin-file-field">
+              <label for="piece-score">Sheet music PDF</label>
+              <input id="piece-score" name="score" type="file" accept=".pdf,application/pdf">
+              <small>PDF · maximum 8 MB</small>
+            </div>
+
+            <div class="admin-file-field">
+              <label for="piece-midi">MIDI file</label>
+              <input id="piece-midi" name="midi" type="file" accept=".mid,.midi,audio/midi">
+              <small>Optional</small>
+            </div>
+
+            <div class="admin-file-field">
+              <label for="piece-musicxml">MusicXML score</label>
+              <input id="piece-musicxml" name="musicxml" type="file" accept=".musicxml,.xml,application/xml,text/xml">
+              <small>Optional</small>
+            </div>
+
+            <button class="admin-primary" type="submit">Add to Crimson</button>
+          </form>
+        </section>
+
+        <section class="admin-panel admin-catalog-panel">
+          <div class="admin-catalog-heading">
+            <div>
+              <p class="eyebrow">PUBLISHED</p>
+              <h2>Current catalog</h2>
+            </div>
+            <button id="refresh-button" class="admin-secondary" type="button">Refresh</button>
+          </div>
+          <p id="admin-catalog-count" class="admin-muted">Loading entries…</p>
+          <ol id="admin-catalog" class="admin-catalog"></ol>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a class="footer-wordmark" href="./">CRIMSON</a>
+      <span>© 2026 Talon. Original music and scores. All rights reserved.</span>
+      <a class="back-top" href="#main">Back to top ↑</a>
+    </div>
+  </footer>
+</body>
+</html>
