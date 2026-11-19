@@ -3,252 +3,250 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b0b0d">
-  <meta name="description" content="Crimson — an interactive index of rooms, experiments, and things to explore.">
+  <meta name="theme-color" content="#f2efe9">
+  <meta name="description" content="Crimson is a growing collection of projects, interactive experiments and 3D objects from Talon">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="CRIMSON">
-  <meta property="og:description" content="An interactive index.">
+  <meta property="og:title" content="Crimson">
+  <meta property="og:description" content="Projects, objects and experiments from Talon">
   <meta property="og:image" content="https://captainbensword.github.io/Crimson/crimson-card.svg">
-  <title>CRIMSON — Interactive Index</title>
+  <title>Crimson — Projects and experiments</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="preload" href="styles.css" as="style">
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
 <body>
-  <div class="scroll-progress" id="scroll-progress"></div>
-  <canvas class="ambient-canvas" id="ambient-canvas" aria-hidden="true"></canvas>
-  <div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
-
-  <header class="site-header" id="top">
+  <header class="site-header">
     <div class="header-inner">
-      <a class="wordmark" href="#top" aria-label="Crimson home">CRIMSON<span class="wordmark-dot">.</span></a>
+      <a class="wordmark" href="#home" aria-label="Crimson home">CRIMSON</a>
       <nav class="main-nav" id="main-nav" aria-label="Main navigation">
-        <a href="#observatory">Observatory</a>
-        <a href="#workshop">Workshop</a>
-        <a href="#console">Console</a>
+        <a href="#collection">Collection</a>
+        <a href="#object-lab">3D objects</a>
+        <a href="#palette-studio">Palette studio</a>
         <a href="#about">About</a>
       </nav>
-      <div class="header-actions">
-        <span class="system-status"><i></i> SYSTEM ONLINE</span>
-        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme">
-          <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.2A8.5 8.5 0 0 1 8.8 3.8 8.6 8.6 0 1 0 20.2 15.2Z"/></svg>
-        </button>
-        <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">
-          <span></span><span></span>
-        </button>
-      </div>
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
     </div>
   </header>
 
-  <main>
-    <section class="hero section-wrap" aria-labelledby="hero-title">
-      <div class="hero-content">
-        <div class="micro-label reveal"><span class="micro-line"></span> INTERACTIVE INDEX <span class="micro-number">NO. 001</span></div>
-        <h1 id="hero-title" class="hero-title reveal">CRIMSON<span class="hero-period">.</span></h1>
-        <div class="hero-lower reveal">
-          <p class="hero-description">A few rooms to explore.<br><span>Find something interesting.</span></p>
-          <div class="hero-buttons">
-            <a class="button button-primary" href="#observatory">ENTER THE INDEX <span aria-hidden="true">↘</span></a>
-            <button class="button button-quiet" type="button" data-open-console>OPEN CONSOLE <span aria-hidden="true">⌘</span></button>
+  <main id="home">
+    <section class="hero page-width">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-mark"></span> A TALON PROJECT SPACE</p>
+        <h1>Projects, objects<br>and experiments</h1>
+        <p class="hero-intro">Crimson is a home for things being made under Talon — interactive experiments, small tools, 3D objects, and projects that are still taking shape</p>
+        <p class="hero-detail">Some things are here to use, others are here to explore. Have a look around and open whatever catches your attention</p>
+        <div class="hero-actions">
+          <a class="button button-dark" href="#collection">Explore Crimson <span aria-hidden="true">↘</span></a>
+          <a class="quiet-link" href="#object-lab">Go to the 3D objects <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="hero-foot">
+          <span><i class="live-dot"></i> Open for exploration</span>
+          <span>Made by Talon</span>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="visual-topline"><span>Featured object</span><span class="visual-index">01 / 03</span></div>
+        <div class="hero-object-stage">
+          <div class="hero-orbit hero-orbit-a"></div>
+          <div class="hero-orbit hero-orbit-b"></div>
+          <div class="hero-orbit hero-orbit-c"></div>
+          <div class="hero-crystal">
+            <span class="crystal-face face-a"></span>
+            <span class="crystal-face face-b"></span>
+            <span class="crystal-face face-c"></span>
+            <span class="crystal-glint"></span>
           </div>
+          <div class="hero-satellite satellite-a"></div>
+          <div class="hero-satellite satellite-b"></div>
+          <span class="stage-coordinate coordinate-left">C / 001</span>
+          <span class="stage-coordinate coordinate-right">FORM STUDY</span>
         </div>
-        <div class="hero-meta reveal">
-          <div><span class="meta-label">CURRENT SECTION</span><strong>01 <i>/</i> 03</strong></div>
-          <div><span class="meta-label">LOCAL TIME</span><strong id="local-time">--:--:--</strong></div>
-          <div><span class="meta-label">STATUS</span><strong><b class="status-dot"></b> READY</strong></div>
+        <div class="visual-caption">
+          <div><strong>Ruby form</strong><span>Faceted geometry / 01</span></div>
+          <a href="#object-lab" aria-label="Explore the 3D object lab">Explore object <span>↗</span></a>
         </div>
       </div>
-
-      <div class="hero-art reveal" aria-label="Abstract animated Crimson core">
-        <div class="art-label art-label-top"><span>CORE / A</span><span>ACTIVE</span></div>
-        <div class="core-stage" id="core-stage">
-          <div class="core-grid"></div>
-          <div class="core-orbit orbit-one"><span class="orbit-node"></span></div>
-          <div class="core-orbit orbit-two"><span class="orbit-node"></span></div>
-          <div class="core-orbit orbit-three"><span class="orbit-node"></span></div>
-          <div class="core-ring ring-inner"></div>
-          <div class="core-object"><div class="core-facet"></div><div class="core-facet facet-two"></div><div class="core-center"></div></div>
-          <span class="core-cross cross-one"></span><span class="core-cross cross-two"></span>
-          <span class="core-coordinate coord-one">38° 14' N</span>
-          <span class="core-coordinate coord-two">117° 09' W</span>
-          <span class="core-coordinate coord-three">R / 001</span>
-        </div>
-        <div class="art-label art-label-bottom"><span>FIG. 001 — THE CORE</span><span class="art-live"><i></i> RUNNING</span></div>
-      </div>
-
-      <div class="hero-scroll"><span class="scroll-line"></span><span>SCROLL TO EXPLORE</span></div>
-      <div class="hero-index">C—001 <span>EST. UNKNOWN</span></div>
+      <div class="hero-bottom-note"><span>SCROLL TO EXPLORE</span><span class="hero-bottom-line"></span><span>01 — 04</span></div>
     </section>
 
-    <div class="ticker" aria-label="Site sections">
-      <div class="ticker-track">
-        <span>OBSERVATORY <b>✳</b></span><span>WORKSHOP <b>✳</b></span><span>COMMAND CONSOLE <b>✳</b></span><span>HIDDEN ROOM <b>✳</b></span>
-        <span>OBSERVATORY <b>✳</b></span><span>WORKSHOP <b>✳</b></span><span>COMMAND CONSOLE <b>✳</b></span><span>HIDDEN ROOM <b>✳</b></span>
-      </div>
-    </div>
-
-    <section class="section-wrap observatory-section" id="observatory">
-      <div class="section-heading reveal">
-        <div>
-          <div class="micro-label"><span class="micro-line"></span> ROOM 01 <span class="micro-number">/ OBSERVATORY</span></div>
-          <h2>Look closer<span class="heading-period">.</span></h2>
-        </div>
-        <p>A small moving system. Change its orbit, pause it, or drag around the space.</p>
-      </div>
-
-      <div class="observatory-panel reveal">
-        <div class="observatory-topbar">
-          <div class="panel-id"><span class="panel-square"></span> OBSERVATION DECK <span class="panel-muted">/ LIVE MODEL</span></div>
-          <div class="panel-readout"><span id="orbit-state">IN MOTION</span><i></i> <span id="orbit-count">03 OBJECTS</span></div>
-        </div>
-        <div class="observatory-body">
-          <div class="orbit-viewport" id="orbit-viewport">
-            <canvas id="orbit-canvas" aria-label="Animated orbital system"></canvas>
-            <div class="orbit-corner-label">FIELD VIEW <span>DRAG TO ROTATE</span></div>
-            <div class="orbit-coords">X <span id="coord-x">000</span> / Y <span id="coord-y">000</span></div>
-          </div>
-          <aside class="observatory-aside">
-            <div class="aside-number">01 <span>—</span> ORBITAL STUDY</div>
-            <h3>Everything<br>in motion.</h3>
-            <p>This is a live little simulation, not a static picture. Its paths and speeds shift every time you change the model.</p>
-            <div class="orbit-stats">
-              <div><span>OBJECTS</span><strong>03</strong></div>
-              <div><span>PATHS</span><strong>03</strong></div>
-              <div><span>ENGINE</span><strong>CANVAS</strong></div>
-            </div>
-            <div class="aside-controls">
-              <button class="button button-primary button-small" id="orbit-toggle" type="button">PAUSE MODEL <span>Ⅱ</span></button>
-              <button class="button button-outline button-small" id="orbit-randomize" type="button">RESHUFFLE <span>↻</span></button>
-            </div>
-            <div class="aside-footnote"><span class="status-dot"></span> FRAME UPDATE <span id="frame-rate">60</span> FPS</div>
-          </aside>
-        </div>
+    <section class="intro-strip">
+      <div class="page-width intro-strip-inner">
+        <p>What is Crimson?</p>
+        <div>It is not one game or one project. It is the shelf for the things that do not fit anywhere else yet — prototypes, useful little tools, visual experiments, and ideas worth developing</div>
       </div>
     </section>
 
-    <section class="section-wrap workshop-section" id="workshop">
-      <div class="section-heading reveal">
+    <section class="collection-section page-width section-space" id="collection">
+      <div class="section-heading">
         <div>
-          <div class="micro-label"><span class="micro-line"></span> ROOM 02 <span class="micro-number">/ WORKSHOP</span></div>
-          <h2>Make a color<span class="heading-period">.</span></h2>
+          <p class="eyebrow">TAKE A LOOK AROUND</p>
+          <h2>The collection</h2>
         </div>
-        <p>Build a palette, tweak the hue, and copy the result. The colors are yours to use.</p>
+        <p class="section-description">A few different directions to explore. This will grow as new things are made</p>
       </div>
 
-      <div class="workshop-grid">
-        <div class="palette-panel reveal">
-          <div class="panel-header">
-            <div><span class="panel-kicker">PALETTE GENERATOR</span><h3 id="palette-name">After Hours</h3></div>
-            <span class="tiny-index">COL / 0<span id="palette-version">1</span></span>
+      <div class="collection-grid">
+        <a class="collection-card card-featured" href="#object-lab">
+          <div class="card-art card-art-object">
+            <span class="card-number">01</span>
+            <div class="mini-crystal"></div>
+            <div class="mini-orbit"></div>
+            <span class="card-art-label">OBJECT STUDY</span>
           </div>
+          <div class="card-copy">
+            <div class="card-title-line"><h3>3D objects</h3><span class="card-arrow">↗</span></div>
+            <p>Rotating forms, shapes, materials, and little scenes you can play with</p>
+            <span class="card-category">INTERACTIVE / 3D</span>
+          </div>
+        </a>
+
+        <a class="collection-card" href="#palette-studio">
+          <div class="card-art card-art-palette">
+            <span class="card-number">02</span>
+            <div class="palette-art-bars"><i></i><i></i><i></i><i></i><i></i></div>
+            <span class="card-art-label">COLOR STUDY</span>
+          </div>
+          <div class="card-copy">
+            <div class="card-title-line"><h3>Palette studio</h3><span class="card-arrow">↗</span></div>
+            <p>Build color combinations, adjust them, and take the values with you</p>
+            <span class="card-category">TOOL / DESIGN</span>
+          </div>
+        </a>
+
+        <a class="collection-card" href="#about">
+          <div class="card-art card-art-sketch">
+            <span class="card-number">03</span>
+            <div class="sketch-window"><i></i><i></i><i></i><b></b></div>
+            <span class="card-art-label">WORK IN PROGRESS</span>
+          </div>
+          <div class="card-copy">
+            <div class="card-title-line"><h3>Sketchbook</h3><span class="card-arrow">↗</span></div>
+            <p>A place for unfinished ideas, tests, and things that might become something</p>
+            <span class="card-category">NOTES / EXPERIMENTS</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="object-section section-space" id="object-lab">
+      <div class="page-width">
+        <div class="section-heading object-heading">
+          <div>
+            <p class="eyebrow">PLAY WITH THE SHAPES</p>
+            <h2>Object lab</h2>
+          </div>
+          <p class="section-description">These are rendered as actual 3D geometry in the browser. Choose a model, drag to turn it, or let it spin</p>
+        </div>
+
+        <div class="object-lab-shell">
+          <div class="object-toolbar">
+            <div class="model-picker" role="group" aria-label="Choose 3D model">
+              <button class="model-choice is-selected" type="button" data-model="ruby" aria-pressed="true">Ruby</button>
+              <button class="model-choice" type="button" data-model="orbit" aria-pressed="false">Orbit</button>
+              <button class="model-choice" type="button" data-model="stack" aria-pressed="false">Stack</button>
+            </div>
+            <div class="toolbar-actions">
+              <button class="tool-button" id="spin-toggle" type="button" aria-pressed="true"><span class="spin-indicator"></span> Auto rotate</button>
+              <button class="tool-button" id="reset-view" type="button">Reset view ↺</button>
+            </div>
+          </div>
+
+          <div class="object-stage" id="object-stage">
+            <div class="stage-grid"></div>
+            <div class="stage-glow"></div>
+            <canvas id="object-canvas" aria-label="Interactive three-dimensional object viewer"></canvas>
+            <div class="stage-label stage-label-top"><span id="model-name">Ruby form</span><span>Drag to rotate</span></div>
+            <div class="stage-label stage-label-bottom"><span id="model-kind">ICOSAHEDRON / CUT GLASS</span><span id="zoom-label">ZOOM 100%</span></div>
+            <div class="stage-crosshair crosshair-a"></div>
+            <div class="stage-crosshair crosshair-b"></div>
+            <div class="stage-fallback" id="webgl-fallback" hidden>
+              <div class="fallback-shape"></div>
+              <p>3D preview is unavailable in this browser</p>
+            </div>
+          </div>
+
+          <div class="object-controls">
+            <div class="object-description">
+              <span class="object-number" id="model-number">01</span>
+              <div><h3 id="model-title">Ruby form</h3><p id="model-description">A cut geometric form with a deep red surface and sharp changes in light</p></div>
+            </div>
+            <div class="material-controls">
+              <span>Material</span>
+              <div class="material-swatches" role="group" aria-label="Choose object material">
+                <button class="material-swatch material-red is-selected" type="button" data-material="red" aria-label="Ruby red" aria-pressed="true"></button>
+                <button class="material-swatch material-pearl" type="button" data-material="pearl" aria-label="Warm pearl" aria-pressed="false"></button>
+                <button class="material-swatch material-blue" type="button" data-material="blue" aria-label="Blue steel" aria-pressed="false"></button>
+                <button class="material-swatch material-gold" type="button" data-material="gold" aria-label="Brushed gold" aria-pressed="false"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="interaction-hint"><span>↔</span> Drag the object to rotate it <span>·</span> Use the scroll wheel or pinch to zoom</p>
+      </div>
+    </section>
+
+    <section class="palette-section page-width section-space" id="palette-studio">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">A SMALL TOOL</p>
+          <h2>Palette studio</h2>
+        </div>
+        <p class="section-description">Make a set of colors for a project, tweak the overall hue, and copy any value you need</p>
+      </div>
+
+      <div class="palette-workspace">
+        <div class="palette-main">
+          <div class="palette-toolbar"><span id="palette-name">Old cinema</span><span class="palette-id">PALETTE <b id="palette-version">01</b></span></div>
           <div class="palette-swatches" id="palette-swatches">
-            <button class="swatch" type="button" data-color-index="0" aria-label="Copy color 1"><span>#A63240</span></button>
-            <button class="swatch" type="button" data-color-index="1" aria-label="Copy color 2"><span>#D66B58</span></button>
-            <button class="swatch" type="button" data-color-index="2" aria-label="Copy color 3"><span>#E7B78C</span></button>
-            <button class="swatch" type="button" data-color-index="3" aria-label="Copy color 4"><span>#53616B</span></button>
-            <button class="swatch" type="button" data-color-index="4" aria-label="Copy color 5"><span>#20242B</span></button>
+            <button class="palette-swatch" type="button" data-swatch="0"><span>#A63A46</span></button>
+            <button class="palette-swatch" type="button" data-swatch="1"><span>#D27B62</span></button>
+            <button class="palette-swatch" type="button" data-swatch="2"><span>#E4C8A8</span></button>
+            <button class="palette-swatch" type="button" data-swatch="3"><span>#6F7774</span></button>
+            <button class="palette-swatch" type="button" data-swatch="4"><span>#25292C</span></button>
           </div>
-          <div class="palette-actions">
-            <button class="button button-primary button-small" id="generate-palette" type="button">GENERATE NEW <span>✳</span></button>
-            <button class="button button-outline button-small" id="copy-palette" type="button">COPY ALL <span>⧉</span></button>
+          <div class="palette-bottom">
+            <div class="palette-actions">
+              <button class="button button-dark button-small" id="generate-palette" type="button">New palette <span>↻</span></button>
+              <button class="button button-light button-small" id="copy-palette" type="button">Copy all <span>⧉</span></button>
+            </div>
+            <label class="hue-control" for="hue-slider"><span>Hue</span><input id="hue-slider" type="range" min="0" max="359" value="0"><b id="hue-value">0°</b></label>
           </div>
-          <div class="hue-control">
-            <label for="hue-slider">COLOR DIRECTION <strong id="hue-value">0°</strong></label>
-            <input id="hue-slider" type="range" min="0" max="359" value="0">
-            <div class="range-ends"><span>WARM</span><span>COOL</span></div>
-          </div>
-          <div class="palette-feedback" id="palette-feedback" aria-live="polite">Click any swatch to copy its hex value.</div>
+          <p class="palette-feedback" id="palette-feedback" aria-live="polite">Select a swatch to copy its hex value</p>
         </div>
 
-        <div class="workshop-side reveal">
-          <div class="color-preview" id="color-preview">
-            <div class="preview-grid"></div>
-            <div class="preview-orb"></div>
-            <div class="preview-caption"><span>LIVE PREVIEW</span><span id="preview-hex">#A63240</span></div>
-          </div>
-          <div class="snippet-panel">
-            <div class="snippet-title"><span>CSS VARIABLES</span><button id="copy-css" type="button">COPY CODE ↗</button></div>
-            <pre id="css-output">--color-01: #A63240;
---color-02: #D66B58;
---color-03: #E7B78C;
---color-04: #53616B;
---color-05: #20242B;</pre>
-          </div>
+        <div class="palette-preview">
+          <div class="preview-shape" id="preview-shape"></div>
+          <div class="preview-bottom"><span>LIVE COLOR PREVIEW</span><strong id="preview-hex">#A63A46</strong></div>
         </div>
       </div>
     </section>
 
-    <section class="section-wrap console-section" id="console">
-      <div class="section-heading reveal">
-        <div>
-          <div class="micro-label"><span class="micro-line"></span> ROOM 03 <span class="micro-number">/ COMMAND CONSOLE</span></div>
-          <h2>Say something<span class="heading-period">.</span></h2>
+    <section class="about-section section-space" id="about">
+      <div class="page-width about-layout">
+        <div class="about-title">
+          <p class="eyebrow">A LITTLE ABOUT THIS PLACE</p>
+          <h2>Made under<br>the Talon name</h2>
         </div>
-        <p>There are a few things this little console understands. Try <code>help</code>.</p>
-      </div>
-
-      <div class="terminal-panel reveal" id="terminal-panel">
-        <div class="terminal-topbar">
-          <div class="terminal-lights"><i></i><i></i><i></i></div>
-          <span>CRIMSON — LOCAL CONSOLE</span>
-          <span class="terminal-version">TTY / 01</span>
+        <div class="about-text">
+          <p>Crimson started as a place to collect music, but that idea never quite fit. This version is broader — a home for digital experiments, interactive objects, small tools, and new projects as they happen</p>
+          <p>It will change over time. Some parts might turn into full projects, others might stay as little experiments. That is kind of the point</p>
+          <a class="about-link" href="https://github.com/CaptainBensword/Crimson" target="_blank" rel="noopener noreferrer">View the Crimson repository <span>↗</span></a>
         </div>
-        <div class="terminal-screen" id="terminal-screen" role="log" aria-live="polite">
-          <p class="terminal-line terminal-muted">CRIMSON INTERACTIVE CONSOLE [VERSION 1.0]</p>
-          <p class="terminal-line">Session started. Type <button class="inline-command" type="button" data-command="help">help</button> to see available commands.</p>
-        </div>
-        <form class="terminal-input-row" id="terminal-form" autocomplete="off">
-          <label for="terminal-input"><span>›</span></label>
-          <input id="terminal-input" name="command" type="text" spellcheck="false" placeholder="Enter a command..." aria-label="Enter a console command">
-          <kbd>ENTER ↵</kbd>
-        </form>
-        <div class="terminal-footer"><span><i></i> CONNECTION LOCAL</span><span>NO EXTERNAL REQUESTS</span></div>
-      </div>
-    </section>
-
-    <section class="section-wrap about-section" id="about">
-      <div class="about-card reveal">
-        <div class="about-graphic" aria-hidden="true">
-          <div class="about-graphic-ring ring-a"></div>
-          <div class="about-graphic-ring ring-b"></div>
-          <div class="about-graphic-core"></div>
-          <span class="about-graphic-cross">+</span>
-        </div>
-        <div class="about-copy">
-          <div class="micro-label"><span class="micro-line"></span> ABOUT THIS PLACE</div>
-          <h2>No instructions.<br>Just explore<span class="heading-period">.</span></h2>
-          <p>Crimson is a small interactive corner of the internet. A few experiments, a few details to find, and room for whatever comes next.</p>
-          <button class="text-button" type="button" id="redroom-open">THERE'S MORE <span>↗</span></button>
-        </div>
-        <div class="about-coordinate">CR—001<br><span>END OF INDEX</span></div>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="footer-main">
-      <a class="footer-wordmark" href="#top">CRIMSON<span>.</span></a>
-      <span class="footer-note">AN INTERACTIVE INDEX</span>
-      <a class="back-top" href="#top">BACK TO TOP ↑</a>
+    <div class="page-width footer-top">
+      <a class="footer-wordmark" href="#home">CRIMSON</a>
+      <span>A Talon project</span>
+      <a href="#home">Back to top ↑</a>
     </div>
-    <div class="footer-bottom">
-      <span>© 2026 TALON</span>
-      <span>BUILT FOR THE CURIOUS</span>
-      <span class="footer-coordinates">00° 00' 00" — 00° 00' 00"</span>
-    </div>
+    <div class="page-width footer-bottom"><span>© 2026 Talon</span><span>Crimson is a work in progress</span></div>
   </footer>
-
-  <div class="easter-egg" id="redroom" hidden role="dialog" aria-modal="true" aria-labelledby="redroom-title">
-    <div class="easter-egg-panel">
-      <button class="easter-close" id="redroom-close" type="button" aria-label="Close">×</button>
-      <div class="micro-label"><span class="micro-line"></span> UNLISTED ROOM / 00</div>
-      <h2 id="redroom-title">You found it<span class="heading-period">.</span></h2>
-      <p>Not everything needs a button. Some things are just here.</p>
-      <div class="egg-stamp">C<span>R</span></div>
-      <button class="button button-primary button-small" id="redroom-return" type="button">BACK TO THE INDEX <span>↗</span></button>
-    </div>
-  </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
