@@ -3,251 +3,209 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f2efe9">
-  <meta name="description" content="Crimson is a growing collection of projects, interactive experiments and 3D objects from Talon">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Crimson">
-  <meta property="og:description" content="Projects, objects and experiments from Talon">
+  <meta name="theme-color" content="#160d10">
+  <meta name="description" content="Crimson Client — an Eaglercraft 1.12.2 client setup with a custom mod pack and resource pack">
+  <meta property="og:title" content="Crimson Client">
+  <meta property="og:description" content="A custom Eaglercraft client by Talon">
   <meta property="og:image" content="https://captainbensword.github.io/Crimson/crimson-card.svg">
-  <title>Crimson — Projects and experiments</title>
+  <title>Crimson Client</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="wordmark" href="#home" aria-label="Crimson home">CRIMSON</a>
-      <nav class="main-nav" id="main-nav" aria-label="Main navigation">
-        <a href="#collection">Collection</a>
-        <a href="#object-lab">3D objects</a>
-        <a href="#palette-studio">Palette studio</a>
-        <a href="#about">About</a>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#overview" aria-label="Crimson Client home">
+        <span class="brand-mark"><i></i><i></i><i></i></span>
+        <span class="brand-word">CRIMSON<small>CLIENT / 1.12.2</small></span>
+      </a>
+      <div class="sidebar-label">CLIENT</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="overview"><span class="nav-icon">▦</span>Overview <kbd>01</kbd></button>
+        <button class="nav-item" data-view="client"><span class="nav-icon">◈</span>Play <kbd>02</kbd></button>
+        <button class="nav-item" data-view="mods"><span class="nav-icon">⌘</span>Mods <kbd>03</kbd></button>
+        <button class="nav-item" data-view="appearance"><span class="nav-icon">▧</span>Appearance <kbd>04</kbd></button>
       </nav>
-      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span>
-      </button>
-    </div>
-  </header>
-
-  <main id="home">
-    <section class="hero page-width">
-      <div class="hero-copy">
-        <p class="eyebrow"><span class="eyebrow-mark"></span> A TALON PROJECT SPACE</p>
-        <h1>Projects, objects<br>and experiments</h1>
-        <p class="hero-intro">Crimson is a home for things being made under Talon — interactive experiments, small tools, 3D objects, and projects that are still taking shape</p>
-        <p class="hero-detail">Some things are here to use, others are here to explore. Have a look around and open whatever catches your attention</p>
-        <div class="hero-actions">
-          <a class="button button-dark" href="#collection">Explore Crimson <span aria-hidden="true">↘</span></a>
-          <a class="quiet-link" href="#object-lab">Go to the 3D objects <span aria-hidden="true">→</span></a>
+      <div class="sidebar-label sidebar-label-lower">PREFERENCES</div>
+      <nav class="side-nav">
+        <button class="nav-item" data-view="settings"><span class="nav-icon">⚙</span>Settings <kbd>05</kbd></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="build-card">
+          <span class="build-dot"></span>
+          <div><b>CRIMSON BUILD</b><small>WEB CLIENT / ALPHA</small></div>
+          <span class="build-version">0.1</span>
         </div>
-        <div class="hero-foot">
-          <span><i class="live-dot"></i> Open for exploration</span>
-          <span>Made by Talon</span>
-        </div>
+        <a class="repo-link" href="https://github.com/CaptainBensword/Crimson" target="_blank" rel="noopener noreferrer">SOURCE & NOTES <span>↗</span></a>
       </div>
+    </aside>
 
-      <div class="hero-visual">
-        <div class="visual-topline"><span>Featured object</span><span class="visual-index">01 / 03</span></div>
-        <div class="hero-object-stage">
-          <div class="hero-orbit hero-orbit-a"></div>
-          <div class="hero-orbit hero-orbit-b"></div>
-          <div class="hero-orbit hero-orbit-c"></div>
-          <div class="hero-crystal">
-            <span class="crystal-face face-a"></span>
-            <span class="crystal-face face-b"></span>
-            <span class="crystal-face face-c"></span>
-            <span class="crystal-glint"></span>
-          </div>
-          <div class="hero-satellite satellite-a"></div>
-          <div class="hero-satellite satellite-b"></div>
-          <span class="stage-coordinate coordinate-left">C / 001</span>
-          <span class="stage-coordinate coordinate-right">FORM STUDY</span>
+    <main class="main-area">
+      <header class="topbar">
+        <div class="breadcrumb"><span>CRIMSON</span><b>/</b><strong id="current-page">OVERVIEW</strong></div>
+        <div class="topbar-right">
+          <span class="version-pill">EAGLERCRAFT 1.12.2</span>
+          <span class="connection-state"><i></i><span id="client-state">NO CLIENT LOADED</span></span>
         </div>
-        <div class="visual-caption">
-          <div><strong>Ruby form</strong><span>Faceted geometry / 01</span></div>
-          <a href="#object-lab" aria-label="Explore the 3D object lab">Explore object <span>↗</span></a>
-        </div>
-      </div>
-      <div class="hero-bottom-note"><span>SCROLL TO EXPLORE</span><span class="hero-bottom-line"></span><span>01 — 04</span></div>
-    </section>
+      </header>
 
-    <section class="intro-strip">
-      <div class="page-width intro-strip-inner">
-        <p>What is Crimson?</p>
-        <div>It is not one game or one project. It is the shelf for the things that do not fit anywhere else yet — prototypes, useful little tools, visual experiments, and ideas worth developing</div>
-      </div>
-    </section>
-
-    <section class="collection-section page-width section-space" id="collection">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">TAKE A LOOK AROUND</p>
-          <h2>The collection</h2>
-        </div>
-        <p class="section-description">A few different directions to explore. This will grow as new things are made</p>
-      </div>
-
-      <div class="collection-grid">
-        <a class="collection-card card-featured" href="#object-lab">
-          <div class="card-art card-art-object">
-            <span class="card-number">01</span>
-            <div class="mini-crystal"></div>
-            <div class="mini-orbit"></div>
-            <span class="card-art-label">OBJECT STUDY</span>
-          </div>
-          <div class="card-copy">
-            <div class="card-title-line"><h3>3D objects</h3><span class="card-arrow">↗</span></div>
-            <p>Rotating forms, shapes, materials, and little scenes you can play with</p>
-            <span class="card-category">INTERACTIVE / 3D</span>
-          </div>
-        </a>
-
-        <a class="collection-card" href="#palette-studio">
-          <div class="card-art card-art-palette">
-            <span class="card-number">02</span>
-            <div class="palette-art-bars"><i></i><i></i><i></i><i></i><i></i></div>
-            <span class="card-art-label">COLOR STUDY</span>
-          </div>
-          <div class="card-copy">
-            <div class="card-title-line"><h3>Palette studio</h3><span class="card-arrow">↗</span></div>
-            <p>Build color combinations, adjust them, and take the values with you</p>
-            <span class="card-category">TOOL / DESIGN</span>
-          </div>
-        </a>
-
-        <a class="collection-card" href="#about">
-          <div class="card-art card-art-sketch">
-            <span class="card-number">03</span>
-            <div class="sketch-window"><i></i><i></i><i></i><b></b></div>
-            <span class="card-art-label">WORK IN PROGRESS</span>
-          </div>
-          <div class="card-copy">
-            <div class="card-title-line"><h3>Sketchbook</h3><span class="card-arrow">↗</span></div>
-            <p>A place for unfinished ideas, tests, and things that might become something</p>
-            <span class="card-category">NOTES / EXPERIMENTS</span>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <section class="object-section section-space" id="object-lab">
-      <div class="page-width">
-        <div class="section-heading object-heading">
-          <div>
-            <p class="eyebrow">PLAY WITH THE SHAPES</p>
-            <h2>Object lab</h2>
-          </div>
-          <p class="section-description">These are rendered as actual 3D geometry in the browser. Choose a model, drag to turn it, or let it spin</p>
+      <section class="view active" id="view-overview">
+        <div class="page-heading">
+          <div><p class="eyebrow"><span class="eyebrow-line"></span> TALON / CLIENT PROJECT</p><h1>Crimson <em>Client</em></h1><p class="heading-sub">Your Eaglercraft setup, with a little more character</p></div>
+          <div class="heading-stamp"><span>BUILD</span><b>001</b><small>1.12.2 / WEB</small></div>
         </div>
 
-        <div class="object-lab-shell">
-          <div class="object-toolbar">
-            <div class="model-picker" role="group" aria-label="Choose 3D model">
-              <button class="model-choice is-selected" type="button" data-model="ruby" aria-pressed="true">Ruby</button>
-              <button class="model-choice" type="button" data-model="orbit" aria-pressed="false">Orbit</button>
-              <button class="model-choice" type="button" data-model="stack" aria-pressed="false">Stack</button>
+        <div class="hero-panel">
+          <div class="hero-copy">
+            <div class="hero-kicker"><span class="status-dot"></span> CLIENT SIDE / CUSTOM BUILD</div>
+            <h2>Make the game<br><span>feel like yours</span></h2>
+            <p>A custom interface, useful in-game additions, and a fresh texture set — built around Eaglercraft 1.12.2</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" data-go="client">SET UP CLIENT <span>→</span></button>
+              <button class="btn btn-ghost" data-go="mods">VIEW MODS <span>⌄</span></button>
             </div>
-            <div class="toolbar-actions">
-              <button class="tool-button" id="spin-toggle" type="button" aria-pressed="true"><span class="spin-indicator"></span> Auto rotate</button>
-              <button class="tool-button" id="reset-view" type="button">Reset view ↺</button>
+            <div class="hero-footnote"><span>NO ACCOUNT NEEDED</span><i></i><span>YOUR WORLDS STAY IN YOUR BROWSER</span></div>
+          </div>
+          <div class="voxel-scene" id="voxel-scene" aria-label="Animated three dimensional block scene">
+            <div class="scene-haze"></div>
+            <div class="scene-ring ring-one"></div><div class="scene-ring ring-two"></div>
+            <div class="voxel voxel-main">
+              <span class="face front"></span><span class="face back"></span><span class="face right"></span><span class="face left"></span><span class="face top"></span><span class="face bottom"></span>
+            </div>
+            <div class="voxel voxel-small voxel-a"><span class="face front"></span><span class="face back"></span><span class="face right"></span><span class="face left"></span><span class="face top"></span><span class="face bottom"></span></div>
+            <div class="voxel voxel-small voxel-b"><span class="face front"></span><span class="face back"></span><span class="face right"></span><span class="face left"></span><span class="face top"></span><span class="face bottom"></span></div>
+            <div class="voxel voxel-dark voxel-c"><span class="face front"></span><span class="face back"></span><span class="face right"></span><span class="face left"></span><span class="face top"></span><span class="face bottom"></span></div>
+            <div class="scene-spark spark-a"></div><div class="scene-spark spark-b"></div><div class="scene-spark spark-c"></div>
+            <div class="scene-coordinate coord-a">X: 014 / Z: 027</div><div class="scene-coordinate coord-b">CR / 001</div>
+            <div class="scene-caption"><span>FIG. 01</span><b>THE CRIMSON BLOCK</b><span>3D VIEW / LIVE</span></div>
+          </div>
+          <div class="hero-index"><span>01</span><span class="hero-index-line"></span><span>04</span></div>
+        </div>
+
+        <div class="overview-grid">
+          <article class="overview-card client-card">
+            <div class="card-top"><span class="card-index">01 / PLAY</span><span class="card-symbol">◈</span></div>
+            <h3>Ready when you are</h3>
+            <p>Load your patched 1.12.2 client once. Crimson remembers it on this browser</p>
+            <button class="text-action" data-go="client">OPEN CLIENT SETUP <span>↗</span></button>
+          </article>
+          <article class="overview-card mods-card">
+            <div class="card-top"><span class="card-index">02 / MODS</span><span class="card-symbol">⌘</span></div>
+            <h3>Useful little upgrades</h3>
+            <p>FPS, keystrokes, CPS, a crosshair overlay, and toggle sprint</p>
+            <button class="text-action" data-go="mods">BROWSE MODS <span>↗</span></button>
+          </article>
+          <article class="overview-card texture-card">
+            <div class="card-top"><span class="card-index">03 / LOOK</span><span class="card-symbol">▧</span></div>
+            <h3>A different world</h3>
+            <p>Original 16×16 textures in a Crimson resource pack for 1.12.2</p>
+            <button class="text-action" data-go="appearance">OPEN APPEARANCE <span>↗</span></button>
+          </article>
+        </div>
+        <div class="info-strip"><span class="info-mark">i</span><p>Crimson does not include the game files. Bring a clean Eaglercraft 1.12.2 standalone HTML, patch it here, then load the patched copy</p><a data-go="client">HOW IT WORKS <span>→</span></a></div>
+      </section>
+
+      <section class="view" id="view-client">
+        <div class="page-heading compact-heading">
+          <div><p class="eyebrow"><span class="eyebrow-line"></span> GAME SETUP</p><h1>Play <em>Crimson</em></h1><p class="heading-sub">One setup, then launch from here</p></div>
+          <div class="heading-stamp"><span>ENGINE</span><b>1.12</b><small>JAVASCRIPT BUILD</small></div>
+        </div>
+        <div class="client-layout">
+          <div class="client-main-panel">
+            <div class="panel-heading"><div><span class="panel-eyebrow">01 / CLIENT FILE</span><h2>Your game copy</h2></div><span class="panel-icon">◈</span></div>
+            <div class="client-file-card" id="client-file-card">
+              <div class="file-icon"><span>HTML</span><b>↗</b></div>
+              <div class="file-details"><strong id="stored-client-name">No patched client saved</strong><span id="stored-client-meta">Import a patched 1.12.2 HTML file</span></div>
+              <span class="file-state" id="stored-client-badge">EMPTY</span>
+            </div>
+            <div class="client-main-actions">
+              <button class="btn btn-primary" id="launch-client">LAUNCH CLIENT <span>▶</span></button>
+              <button class="btn btn-secondary" id="import-client">IMPORT PATCHED HTML</button>
+              <input id="client-file-input" type="file" accept=".html,.htm,text/html" hidden>
+            </div>
+            <p class="inline-note" id="client-note">Your imported file is stored in this browser only. It is not uploaded to a server</p>
+            <div class="panel-divider"></div>
+            <div class="panel-heading small-panel-heading"><div><span class="panel-eyebrow">02 / PATCHER</span><h2>Add the mod loader</h2></div><span class="step-number">02</span></div>
+            <p class="panel-paragraph">Start with a clean, standalone EaglercraftX 1.12.2 JavaScript HTML file. The patcher adds the EaglerLite mod API, which lets Crimson's in-game mods load</p>
+            <a class="btn btn-outline" href="patcher.html" target="_blank" rel="noopener noreferrer">OPEN CRIMSON PATCHER <span>↗</span></a>
+            <div class="steps-list">
+              <div><b>1</b><span>Open the patcher and select your clean 1.12.2 HTML</span></div>
+              <div><b>2</b><span>Download the patched HTML, then return here</span></div>
+              <div><b>3</b><span>Import it above and launch your client</span></div>
             </div>
           </div>
+          <aside class="client-side-panel">
+            <div class="side-panel-title">CLIENT DETAILS <span>CR / 001</span></div>
+            <div class="detail-row"><span>GAME VERSION</span><b>1.12.2</b></div>
+            <div class="detail-row"><span>PLATFORM</span><b>Browser / WASM-free JS</b></div>
+            <div class="detail-row"><span>MOD LOADER</span><b>EaglerLite API</b></div>
+            <div class="detail-row"><span>STORAGE</span><b>This browser</b></div>
+            <div class="side-panel-note"><span class="note-diamond">◆</span><p>Worlds and settings remain inside the browser storage used by the game. Keep a separate EPK export of worlds you care about</p></div>
+          </aside>
+        </div>
+      </section>
 
-          <div class="object-stage" id="object-stage">
-            <div class="stage-grid"></div>
-            <div class="stage-glow"></div>
-            <canvas id="object-canvas" aria-label="Interactive three-dimensional object viewer"></canvas>
-            <div class="stage-label stage-label-top"><span id="model-name">Ruby form</span><span>Drag to rotate</span></div>
-            <div class="stage-label stage-label-bottom"><span id="model-kind">ICOSAHEDRON / CUT GLASS</span><span id="zoom-label">ZOOM 100%</span></div>
-            <div class="stage-crosshair crosshair-a"></div>
-            <div class="stage-crosshair crosshair-b"></div>
-            <div class="stage-fallback" id="webgl-fallback" hidden>
-              <div class="fallback-shape"></div>
-              <p>3D preview is unavailable in this browser</p>
-            </div>
-          </div>
+      <section class="view" id="view-mods">
+        <div class="page-heading compact-heading">
+          <div><p class="eyebrow"><span class="eyebrow-line"></span> IN-GAME FEATURES</p><h1>Mod <em>library</em></h1><p class="heading-sub">Small tools that stay out of your way</p></div>
+          <div class="heading-stamp"><span>PACK</span><b>005</b><small>CRIMSON ESSENTIALS</small></div>
+        </div>
+        <div class="mods-toolbar"><div><span class="toolbar-label">CRIMSON ESSENTIALS</span><p>Import the pack once from the in-game mod menu</p></div><a class="btn btn-primary" href="mods/crimson-mod-pack.json" download>DOWNLOAD MOD PACK <span>↓</span></a></div>
+        <div class="mods-grid">
+          <article class="mod-card"><div class="mod-card-top"><span class="mod-number">01</span><span class="mod-status">READY TO IMPORT</span></div><div class="mod-icon icon-fps">FPS</div><h3>Performance HUD</h3><p>Live FPS, frame time, and a compact system readout</p><div class="mod-tags"><span>HUD</span><span>PERFORMANCE</span></div></article>
+          <article class="mod-card"><div class="mod-card-top"><span class="mod-number">02</span><span class="mod-status">READY TO IMPORT</span></div><div class="mod-icon icon-keys">W<br><small>A S D</small></div><h3>Keystrokes & CPS</h3><p>See movement keys and clicks per second while you play</p><div class="mod-tags"><span>HUD</span><span>INPUT</span></div></article>
+          <article class="mod-card"><div class="mod-card-top"><span class="mod-number">03</span><span class="mod-status">READY TO IMPORT</span></div><div class="mod-icon icon-sprint">»</div><h3>Toggle Sprint</h3><p>Keep sprint held with a configurable key combination</p><div class="mod-tags"><span>MOVEMENT</span><span>KEYBIND</span></div></article>
+          <article class="mod-card"><div class="mod-card-top"><span class="mod-number">04</span><span class="mod-status">READY TO IMPORT</span></div><div class="mod-icon icon-crosshair">⌖</div><h3>Crimson Crosshair</h3><p>A clean center reticle with adjustable size, gap, and color</p><div class="mod-tags"><span>VISUAL</span><span>CONFIG</span></div></article>
+          <article class="mod-card mod-card-wide"><div class="mod-card-top"><span class="mod-number">05</span><span class="mod-status">RESOURCE PACK</span></div><div class="mod-wide-art"><div class="texture-tile tile-stone"></div><div class="texture-tile tile-grass"></div><div class="texture-tile tile-wood"></div><div class="texture-tile tile-crystal"></div></div><div><h3>Crimson Textures</h3><p>Original 16×16 block textures — stone, grass, oak, obsidian, and more</p><button class="text-action" id="download-textures">BUILD RESOURCE PACK <span>↓</span></button></div></article>
+        </div>
+        <div class="import-help"><span class="help-key">F6</span><div><b>Import inside the game</b><p>Launch your patched client → press F6 → Import Mod → choose <strong>crimson-mod-pack.json</strong></p></div></div>
+      </section>
 
-          <div class="object-controls">
-            <div class="object-description">
-              <span class="object-number" id="model-number">01</span>
-              <div><h3 id="model-title">Ruby form</h3><p id="model-description">A cut geometric form with a deep red surface and sharp changes in light</p></div>
-            </div>
-            <div class="material-controls">
-              <span>Material</span>
-              <div class="material-swatches" role="group" aria-label="Choose object material">
-                <button class="material-swatch material-red is-selected" type="button" data-material="red" aria-label="Ruby red" aria-pressed="true"></button>
-                <button class="material-swatch material-pearl" type="button" data-material="pearl" aria-label="Warm pearl" aria-pressed="false"></button>
-                <button class="material-swatch material-blue" type="button" data-material="blue" aria-label="Blue steel" aria-pressed="false"></button>
-                <button class="material-swatch material-gold" type="button" data-material="gold" aria-label="Brushed gold" aria-pressed="false"></button>
+      <section class="view" id="view-appearance">
+        <div class="page-heading compact-heading">
+          <div><p class="eyebrow"><span class="eyebrow-line"></span> RESOURCE PACK / VISUALS</p><h1>Change the <em>look</em></h1><p class="heading-sub">A darker palette with warmer highlights and crisp pixels</p></div>
+          <div class="heading-stamp"><span>TEXTURES</span><b>16×</b><small>ORIGINAL PIXEL ART</small></div>
+        </div>
+        <div class="appearance-layout">
+          <div class="texture-preview-panel">
+            <div class="panel-heading"><div><span class="panel-eyebrow">MATERIAL STUDY / 001</span><h2>Crimson terrain</h2></div><span class="panel-icon">▧</span></div>
+            <div class="texture-scene" id="texture-scene">
+              <div class="texture-platform"></div>
+              <div class="texture-cube">
+                <span class="cube-face cube-front"></span><span class="cube-face cube-side"></span><span class="cube-face cube-top"></span>
               </div>
+              <div class="texture-cube small-cube"><span class="cube-face cube-front"></span><span class="cube-face cube-side"></span><span class="cube-face cube-top"></span></div>
             </div>
+            <div class="texture-caption"><span>BLOCK SET / 16×16</span><b>STONE · GRASS · OAK · OBSIDIAN</b></div>
+          </div>
+          <div class="appearance-side">
+            <div class="panel-heading"><div><span class="panel-eyebrow">DOWNLOAD</span><h2>Crimson Pack</h2></div></div>
+            <p class="panel-paragraph">A lightweight resource pack made for the 1.12.2 texture layout. It replaces selected blocks and leaves the rest of the vanilla textures alone</p>
+            <div class="pack-detail-list"><div><span>RESOLUTION</span><b>16×16</b></div><div><span>PACK FORMAT</span><b>3 / MC 1.12</b></div><div><span>FILES</span><b>8 textures</b></div><div><span>DEPENDENCIES</span><b>None</b></div></div>
+            <button class="btn btn-primary btn-full" id="download-textures-side">BUILD RESOURCE PACK <span>↓</span></button>
+            <p class="tiny-note">After downloading, import the ZIP from the game's Resource Packs screen</p>
           </div>
         </div>
-        <p class="interaction-hint"><span>↔</span> Drag the object to rotate it <span>·</span> Use the scroll wheel or pinch to zoom</p>
-      </div>
-    </section>
+        <div class="material-row"><span>PALETTE</span><i></i><i></i><i></i><i></i><i></i><b>EMBER / SLATE / ASH</b></div>
+      </section>
 
-    <section class="palette-section page-width section-space" id="palette-studio">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">A SMALL TOOL</p>
-          <h2>Palette studio</h2>
+      <section class="view" id="view-settings">
+        <div class="page-heading compact-heading">
+          <div><p class="eyebrow"><span class="eyebrow-line"></span> PREFERENCES</p><h1>Client <em>settings</em></h1><p class="heading-sub">A few controls for this launcher</p></div>
+          <div class="heading-stamp"><span>LOCAL</span><b>CFG</b><small>THIS DEVICE</small></div>
         </div>
-        <p class="section-description">Make a set of colors for a project, tweak the overall hue, and copy any value you need</p>
-      </div>
-
-      <div class="palette-workspace">
-        <div class="palette-main">
-          <div class="palette-toolbar"><span id="palette-name">Old cinema</span><span class="palette-id">PALETTE <b id="palette-version">01</b></span></div>
-          <div class="palette-swatches" id="palette-swatches">
-            <button class="palette-swatch" type="button" data-swatch="0"><span>#A63A46</span></button>
-            <button class="palette-swatch" type="button" data-swatch="1"><span>#D27B62</span></button>
-            <button class="palette-swatch" type="button" data-swatch="2"><span>#E4C8A8</span></button>
-            <button class="palette-swatch" type="button" data-swatch="3"><span>#6F7774</span></button>
-            <button class="palette-swatch" type="button" data-swatch="4"><span>#25292C</span></button>
-          </div>
-          <div class="palette-bottom">
-            <div class="palette-actions">
-              <button class="button button-dark button-small" id="generate-palette" type="button">New palette <span>↻</span></button>
-              <button class="button button-light button-small" id="copy-palette" type="button">Copy all <span>⧉</span></button>
-            </div>
-            <label class="hue-control" for="hue-slider"><span>Hue</span><input id="hue-slider" type="range" min="0" max="359" value="0"><b id="hue-value">0°</b></label>
-          </div>
-          <p class="palette-feedback" id="palette-feedback" aria-live="polite">Select a swatch to copy its hex value</p>
+        <div class="settings-panel">
+          <div class="setting-row"><div><b>Reduce interface motion</b><p>Turn off the rotating block scene and interface transitions</p></div><label class="switch"><input type="checkbox" id="reduce-motion"><span></span></label></div>
+          <div class="setting-row"><div><b>Saved client file</b><p>Remove the patched HTML stored in this browser</p></div><button class="btn btn-danger" id="remove-client">REMOVE CLIENT</button></div>
+          <div class="setting-row"><div><b>Project source</b><p>Crimson Client files and attribution notes</p></div><a class="text-action" href="https://github.com/CaptainBensword/Crimson" target="_blank" rel="noopener noreferrer">OPEN REPOSITORY ↗</a></div>
         </div>
+        <div class="license-note"><b>OPEN-SOURCE NOTES</b><p>The patcher uses the EaglerLite Mod API under Apache License 2.0. Crimson's mods and texture work are original additions. The game itself is not bundled here</p><a href="https://github.com/PlanetDogeCodes/EaglerLite-API" target="_blank" rel="noopener noreferrer">EaglerLite API source ↗</a></div>
+      </section>
 
-        <div class="palette-preview">
-          <div class="preview-shape" id="preview-shape"></div>
-          <div class="preview-bottom"><span>LIVE COLOR PREVIEW</span><strong id="preview-hex">#A63A46</strong></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="about-section section-space" id="about">
-      <div class="page-width about-layout">
-        <div class="about-title">
-          <p class="eyebrow">A LITTLE ABOUT THIS PLACE</p>
-          <h2>Made under<br>the Talon name</h2>
-        </div>
-        <div class="about-text">
-          <p>Crimson started as a place to collect music, but that idea never quite fit. This version is broader — a home for digital experiments, interactive objects, small tools, and new projects as they happen</p>
-          <p>It will change over time. Some parts might turn into full projects, others might stay as little experiments. That is kind of the point</p>
-          <a class="about-link" href="https://github.com/CaptainBensword/Crimson" target="_blank" rel="noopener noreferrer">View the Crimson repository <span>↗</span></a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="page-width footer-top">
-      <a class="footer-wordmark" href="#home">CRIMSON</a>
-      <span>A Talon project</span>
-      <a href="#home">Back to top ↑</a>
-    </div>
-    <div class="page-width footer-bottom"><span>© 2026 Talon</span><span>Crimson is a work in progress</span></div>
-  </footer>
-
+      <footer class="app-footer"><span>CRIMSON CLIENT <b>·</b> A TALON PROJECT</span><span>MADE TO RUN IN THE BROWSER</span><span>BUILD 001</span></footer>
+    </main>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
