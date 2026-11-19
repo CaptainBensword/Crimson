@@ -6,6 +6,7 @@
 
   const el = {
     status: document.getElementById("admin-status"),
+    setupPanel: document.getElementById("setup-panel"),
     loginPanel: document.getElementById("login-panel"),
     loginForm: document.getElementById("login-form"),
     password: document.getElementById("admin-password"),
@@ -39,7 +40,14 @@
   }
 
   function showLogin() {
+    el.setupPanel.hidden = true;
     el.loginPanel.hidden = false;
+    el.dashboard.hidden = true;
+  }
+
+  function showSetup() {
+    el.setupPanel.hidden = false;
+    el.loginPanel.hidden = true;
     el.dashboard.hidden = true;
   }
 
@@ -78,14 +86,10 @@
 
   async function checkSession() {
     if (!apiBase) {
-      say("Admin is not connected yet. The private Worker must be deployed and its URL added to admin-config.js. No password is checked or stored on this public page.", "warning");
-      showLogin();
-      el.password.disabled = true;
-      el.loginForm.querySelector("button").disabled = true;
+      say("Admin uploads are not available until the private service is deployed.", "warning");
+      showSetup();
       return;
     }
-    el.password.disabled = false;
-    el.loginForm.querySelector("button").disabled = false;
     if (!sessionToken) {
       say("Admin connection ready. Sign in to continue.", "neutral");
       showLogin();
