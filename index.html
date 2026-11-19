@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171717">
+  <meta name="description" content="Browse the Crimson music library.">
+  <title>Crimson — Library</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="wordmark" href="./" aria-label="Crimson home">CRIMSON</a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="nav-link is-active" href="./" aria-current="page">Library</a>
+        <a class="nav-link" href="about.html">About</a>
+      </nav>
+      <label class="search-box" for="catalog-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+        <input id="catalog-search" type="search" placeholder="Search the library" autocomplete="off">
+        <kbd>/</kbd>
+      </label>
+    </div>
+  </header>
+
+  <main id="main" class="page-shell">
+    <section class="page-heading">
+      <div>
+        <p class="eyebrow">CRIMSON / LIBRARY</p>
+        <h1 id="page-title">Library</h1>
+      </div>
+      <p class="page-note">Browse by collection or search for a piece</p>
+    </section>
+
+    <section class="collections-section" aria-labelledby="collections-title">
+      <div class="section-heading">
+        <h2 id="collections-title">Collections</h2>
+        <span class="section-kicker">BROWSE</span>
+      </div>
+
+      <div class="collection-grid">
+        <a class="collection-card" href="?category=sheet-music" data-collection="sheet-music">
+          <span class="collection-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 4.5h10a3 3 0 0 1 3 3v12H8a3 3 0 0 0-3 0z"></path><path d="M5 4.5v15M8 8h7M8 11h7M8 14h5"></path></svg>
+          </span>
+          <span class="collection-copy"><strong>Sheet Music</strong><small>Scores and individual parts</small></span>
+          <span class="collection-count" data-count-for="sheet-music">0</span>
+        </a>
+
+        <a class="collection-card" href="?category=game-music" data-collection="game-music">
+          <span class="collection-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M7.5 8h9a4 4 0 0 1 3.8 5.2l-1 3.1a2.4 2.4 0 0 1-3.9 1l-2.1-1.8h-2.6l-2.1 1.8a2.4 2.4 0 0 1-3.9-1l-1-3.1A4 4 0 0 1 7.5 8Z"></path><path d="M8 11v4M6 13h4M15.5 12h.01M18 14h.01"></path></svg>
+          </span>
+          <span class="collection-copy"><strong>Game Music</strong><small>Music written for games</small></span>
+          <span class="collection-count" data-count-for="game-music">0</span>
+        </a>
+
+        <a class="collection-card" href="?category=podcast-video" data-collection="podcast-video">
+          <span class="collection-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="13" rx="4"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"></path></svg>
+          </span>
+          <span class="collection-copy"><strong>Podcast &amp; Video</strong><small>Themes, intros and background music</small></span>
+          <span class="collection-count" data-count-for="podcast-video">0</span>
+        </a>
+
+        <a class="collection-card" href="?category=compositions" data-collection="compositions">
+          <span class="collection-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 6.5h16M4 12h16M4 17.5h16"></path><path d="M8 4v5M14 9.5v5M18 15v5"></path></svg>
+          </span>
+          <span class="collection-copy"><strong>Compositions</strong><small>Standalone pieces and studies</small></span>
+          <span class="collection-count" data-count-for="compositions">0</span>
+        </a>
+
+        <a class="collection-card" href="?category=other" data-collection="other">
+          <span class="collection-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"></rect><rect x="14" y="4" width="6" height="6" rx="1"></rect><rect x="4" y="14" width="6" height="6" rx="1"></rect><rect x="14" y="14" width="6" height="6" rx="1"></rect></svg>
+          </span>
+          <span class="collection-copy"><strong>Other</strong><small>Everything outside the main groups</small></span>
+          <span class="collection-count" data-count-for="other">0</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="catalog-section" aria-labelledby="catalog-title">
+      <div class="catalog-heading">
+        <div>
+          <p class="eyebrow">THE CATALOG</p>
+          <h2 id="catalog-title">All music</h2>
+        </div>
+        <label class="sort-control" for="sort-select">
+          <span>Sort</span>
+          <select id="sort-select">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="title">Title A–Z</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="genre-filters" class="genre-filters" aria-label="Filter by genre" hidden></div>
+      <p id="result-count" class="result-count" aria-live="polite">Loading catalog…</p>
+
+      <ol id="track-list" class="track-list"></ol>
+
+      <div id="empty-state" class="empty-state" hidden>
+        <div class="empty-mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+        <h3 id="empty-title">Nothing here yet</h3>
+        <p id="empty-message">There are no pieces in this collection yet</p>
+      </div>
+    </section>
+
+    <section id="about" class="about-strip">
+      <div>
+        <p class="eyebrow">ABOUT CRIMSON</p>
+        <h2>A home for music, scores and related files</h2>
+      </div>
+      <a class="text-link" href="about.html">About this library <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a class="footer-wordmark" href="./">CRIMSON</a>
+      <span>Music library</span>
+      <a href="#top" class="back-top">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <dialog id="track-dialog" class="track-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-inner">
+      <div class="dialog-top">
+        <span class="dialog-label">CRIMSON / PIECE</span>
+        <button class="icon-button" id="dialog-close" type="button" aria-label="Close details">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+        </button>
+      </div>
+      <div id="dialog-content"></div>
+    </div>
+  </dialog>
+</body>
+</html>
