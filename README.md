@@ -16,6 +16,8 @@ Crimson is a music library for original recordings, sheet music, game music, pod
 **Storm Frontier** is an original French horn in F piece by Talon. Its score is written in D minor, 4/4, at quarter note = 112. The preview on the site is synthesized from the same note sequence stored in `music.json`.
 
 Files:
+- `music/covers/storm-frontier-cover.svg` — original cover artwork
+- `music/audio/storm-frontier-horn.mp3` — playable French-horn render
 - `music/scores/storm-frontier-horn.pdf`
 - `music/musicxml/storm-frontier-horn.musicxml`
 - `music/midi/storm-frontier-horn.mid`
