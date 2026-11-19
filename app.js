@@ -1,525 +1,350 @@
 (function () {
   "use strict";
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const $ = function (selector, root) { return (root || document).querySelector(selector); };
-  const $$ = function (selector, root) { return Array.from((root || document).querySelectorAll(selector)); };
+  const $ = (selector, root) => (root || document).querySelector(selector);
+  const $$ = (selector, root) => Array.from((root || document).querySelectorAll(selector));
+  let toastTimer = 0;
+  let activeBlobUrl = null;
 
-  // Scroll progress and local clock
-  const progress = $("#scroll-progress");
-  function updateScroll() {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    const value = max > 0 ? (window.scrollY / max) * 100 : 0;
-    progress.style.width = value.toFixed(2) + "%";
-  }
-  window.addEventListener("scroll", updateScroll, { passive: true });
-  updateScroll();
-
-  const timeLabel = $("#local-time");
-  function updateClock() {
-    timeLabel.textContent = new Intl.DateTimeFormat(undefined, {
-      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
-    }).format(new Date());
-  }
-  updateClock();
-  window.setInterval(updateClock, 1000);
-
-  // Reveal sections only as they approach the viewport
-  const revealItems = $$(".reveal");
-  if ("IntersectionObserver" in window && !reduceMotion) {
-    const observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12, rootMargin: "0px 0px -30px 0px" });
-    revealItems.forEach(function (item, index) {
-      item.style.transitionDelay = Math.min(index % 4, 3) * 65 + "ms";
-      observer.observe(item);
-    });
-  } else {
-    revealItems.forEach(function (item) { item.classList.add("is-visible"); });
+  function toast(message) {
+    const box = $("#toast");
+    box.textContent = message;
+    box.classList.add("visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => box.classList.remove("visible"), 2600);
   }
 
-  // Cursor light and subtle hero parallax
-  const glow = $("#cursor-glow");
-  let pointerX = window.innerWidth * 0.5;
-  let pointerY = window.innerHeight * 0.35;
-  window.addEventListener("pointermove", function (event) {
-    pointerX = event.clientX;
-    pointerY = event.clientY;
-    glow.style.left = pointerX + "px";
-    glow.style.top = pointerY + "px";
-    const stage = $("#core-stage");
-    if (stage && !reduceMotion) {
-      const rect = stage.getBoundingClientRect();
-      const dx = (pointerX - (rect.left + rect.width / 2)) / rect.width;
-      const dy = (pointerY - (rect.top + rect.height / 2)) / rect.height;
-      stage.style.transform = "perspective(900px) rotateY(" + (dx * 4).toFixed(2) + "deg) rotateX(" + (-dy * 4).toFixed(2) + "deg)";
-    }
-  }, { passive: true });
-  document.addEventListener("pointerleave", function () { glow.style.opacity = "0"; });
-  document.addEventListener("pointerenter", function () { glow.style.opacity = ".11"; });
+  const pageNames = {
+    overview: "OVERVIEW",
+    client: "PLAY",
+    mods: "MOD LIBRARY",
+    appearance: "APPEARANCE",
+    settings: "SETTINGS"
+  };
 
-  // Mobile navigation
-  const menuToggle = $("#menu-toggle");
-  const nav = $("#main-nav");
-  menuToggle.addEventListener("click", function () {
-    const isOpen = nav.classList.toggle("is-open");
-    menuToggle.setAttribute("aria-expanded", String(isOpen));
-    menuToggle.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
-  });
-  $$("#main-nav a").forEach(function (link) {
-    link.addEventListener("click", function () {
-      nav.classList.remove("is-open");
-      menuToggle.setAttribute("aria-expanded", "false");
-    });
-  });
-
-  // Theme switch
-  const themeToggle = $("#theme-toggle");
-  try {
-    if (localStorage.getItem("crimson-theme") === "light") document.body.classList.add("light-mode");
-  } catch (error) {}
-  themeToggle.addEventListener("click", function () {
-    const light = document.body.classList.toggle("light-mode");
-    try { localStorage.setItem("crimson-theme", light ? "light" : "dark"); } catch (error) {}
-    showToast(light ? "Light mode" : "Dark mode");
-  });
-
-  // Toast
-  let toastTimer;
-  function showToast(message) {
-    const toast = $("#toast");
-    toast.textContent = message;
-    toast.classList.add("is-visible");
-    window.clearTimeout(toastTimer);
-    toastTimer = window.setTimeout(function () { toast.classList.remove("is-visible"); }, 1900);
+  function showView(name) {
+    if (!pageNames[name]) return;
+    $$(".view").forEach(view => view.classList.toggle("active", view.id === "view-" + name));
+    $$(".nav-item").forEach(button => button.classList.toggle("active", button.dataset.view === name));
+    $("#current-page").textContent = pageNames[name];
+    history.replaceState(null, "", "#" + name);
+    window.scrollTo({ top: 0, behavior: document.body.classList.contains("reduce-motion") ? "auto" : "smooth" });
   }
 
-  // Ambient particle field
-  const ambient = $("#ambient-canvas");
-  const ambientContext = ambient.getContext("2d");
-  let particles = [];
-  let ambientWidth = 0;
-  let ambientHeight = 0;
-  let ambientFrame = 0;
+  $$(".nav-item").forEach(button => button.addEventListener("click", () => showView(button.dataset.view)));
+  $$("[data-go]").forEach(button => button.addEventListener("click", () => showView(button.dataset.go)));
+  const initialView = location.hash.replace("#", "");
+  if (pageNames[initialView]) showView(initialView);
 
-  function resizeAmbient() {
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
-    ambientWidth = window.innerWidth;
-    ambientHeight = window.innerHeight;
-    ambient.width = Math.round(ambientWidth * ratio);
-    ambient.height = Math.round(ambientHeight * ratio);
-    ambientContext.setTransform(ratio, 0, 0, ratio, 0, 0);
-    const count = Math.min(90, Math.max(30, Math.floor((ambientWidth * ambientHeight) / 18000)));
-    particles = Array.from({ length: count }, function () {
-      return {
-        x: Math.random() * ambientWidth,
-        y: Math.random() * ambientHeight,
-        r: Math.random() * 1.2 + 0.35,
-        a: Math.random() * 0.44 + 0.08,
-        speed: Math.random() * 0.14 + 0.025,
-        phase: Math.random() * Math.PI * 2
+  // IndexedDB keeps the user's patched client on this device, without uploading it
+  const DB_NAME = "crimson-client-store";
+  const DB_VERSION = 1;
+  function openDatabase() {
+    return new Promise((resolve, reject) => {
+      if (!("indexedDB" in window)) return reject(new Error("This browser does not support local client storage"));
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        if (!db.objectStoreNames.contains("clients")) db.createObjectStore("clients", { keyPath: "id" });
       };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error("Could not open local storage"));
     });
   }
 
-  function drawAmbient() {
-    ambientContext.clearRect(0, 0, ambientWidth, ambientHeight);
-    particles.forEach(function (p) {
-      p.phase += 0.007;
-      if (!reduceMotion) p.y -= p.speed;
-      if (p.y < -4) { p.y = ambientHeight + 4; p.x = Math.random() * ambientWidth; }
-      ambientContext.beginPath();
-      ambientContext.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ambientContext.fillStyle = "rgba(222, 184, 174, " + (p.a * (0.7 + Math.sin(p.phase) * 0.3)) + ")";
-      ambientContext.fill();
+  async function databaseAction(mode, action) {
+    const db = await openDatabase();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction("clients", mode);
+      const store = transaction.objectStore("clients");
+      let request;
+      try { request = action(store); } catch (error) { db.close(); reject(error); return; }
+      if (request) {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error("Storage operation failed"));
+      } else {
+        transaction.oncomplete = () => resolve(true);
+      }
+      transaction.onerror = () => reject(transaction.error || new Error("Storage transaction failed"));
+      transaction.oncomplete = () => db.close();
     });
-    if (!reduceMotion) ambientFrame = window.requestAnimationFrame(drawAmbient);
-  }
-  resizeAmbient();
-  drawAmbient();
-  window.addEventListener("resize", function () {
-    window.cancelAnimationFrame(ambientFrame);
-    resizeAmbient();
-    drawAmbient();
-    resizeOrbit();
-  }, { passive: true });
-
-  // Orbital playground
-  const orbitCanvas = $("#orbit-canvas");
-  const orbitContext = orbitCanvas.getContext("2d");
-  const orbitState = $("#orbit-state");
-  const orbitToggle = $("#orbit-toggle");
-  const orbitRandomize = $("#orbit-randomize");
-  const coordX = $("#coord-x");
-  const coordY = $("#coord-y");
-  const orbitViewport = $("#orbit-viewport");
-  let orbitWidth = 0;
-  let orbitHeight = 0;
-  let orbitDpr = 1;
-  let orbitFrame = 0;
-  let orbitRunning = !reduceMotion;
-  let orbitTime = 0;
-  let orbitDrag = false;
-  let dragPoint = null;
-  let orbitOffsetX = 0;
-  let orbitOffsetY = 0;
-  let fpsCounter = 0;
-  let fpsStart = performance.now();
-  const orbitObjects = [
-    { radius: .19, speed: .82, phase: .4, size: 5, color: "#e66b72", glow: "rgba(230,107,114,.8)" },
-    { radius: .32, speed: -.48, phase: 2.8, size: 7, color: "#d1b49f", glow: "rgba(209,180,159,.75)" },
-    { radius: .43, speed: .31, phase: 4.7, size: 4, color: "#9d839b", glow: "rgba(157,131,155,.8)" }
-  ];
-
-  function resizeOrbit() {
-    const rect = orbitViewport.getBoundingClientRect();
-    orbitWidth = rect.width;
-    orbitHeight = rect.height;
-    orbitDpr = Math.min(window.devicePixelRatio || 1, 2);
-    orbitCanvas.width = Math.max(1, Math.round(orbitWidth * orbitDpr));
-    orbitCanvas.height = Math.max(1, Math.round(orbitHeight * orbitDpr));
-    orbitContext.setTransform(orbitDpr, 0, 0, orbitDpr, 0, 0);
-    drawOrbit();
   }
 
-  function drawOrbit() {
-    if (!orbitWidth || !orbitHeight) return;
-    const ctx = orbitContext;
-    ctx.clearRect(0, 0, orbitWidth, orbitHeight);
-    const cx = orbitWidth * .5 + orbitOffsetX;
-    const cy = orbitHeight * .51 + orbitOffsetY;
-    const base = Math.min(orbitWidth, orbitHeight) * .43;
+  const getClientRecord = () => databaseAction("readonly", store => store.get("main"));
+  const putClientRecord = record => databaseAction("readwrite", store => store.put(record));
+  const deleteClientRecord = () => databaseAction("readwrite", store => store.delete("main"));
 
-    // Distant points
-    for (let i = 0; i < 55; i += 1) {
-      const x = (i * 127.7 + 19) % orbitWidth;
-      const y = (i * 81.3 + 11) % orbitHeight;
-      ctx.beginPath();
-      ctx.arc(x, y, (i % 3) * .35 + .45, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(222,204,195," + (i % 4 ? .2 : .48) + ")";
-      ctx.fill();
+  function showStoredClient(record) {
+    const name = $("#stored-client-name");
+    const meta = $("#stored-client-meta");
+    const badge = $("#stored-client-badge");
+    if (!record) {
+      name.textContent = "No patched client saved";
+      meta.textContent = "Import a patched 1.12.2 HTML file";
+      badge.textContent = "EMPTY";
+      badge.classList.remove("ready");
+      $("#client-state").textContent = "NO CLIENT LOADED";
+      return;
     }
-
-    // Central axis
-    ctx.strokeStyle = "rgba(207,174,163,.09)";
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(cx, 16); ctx.lineTo(cx, orbitHeight - 16); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(16, cy); ctx.lineTo(orbitWidth - 16, cy); ctx.stroke();
-
-    // Orbits and objects
-    orbitObjects.forEach(function (object, index) {
-      const rx = base * object.radius * 2.05;
-      const ry = rx * (.48 + index * .035);
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(-.28 + index * .19);
-      ctx.beginPath();
-      ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
-      ctx.strokeStyle = index === 1 ? "rgba(194,58,75,.38)" : "rgba(205,186,173,.2)";
-      ctx.setLineDash(index === 2 ? [3, 7] : []);
-      ctx.stroke();
-      ctx.restore();
-      const angle = object.phase + orbitTime * object.speed;
-      const px = cx + Math.cos(angle) * rx;
-      const py = cy + Math.sin(angle) * ry;
-      const glow = ctx.createRadialGradient(px, py, 0, px, py, object.size * 4.4);
-      glow.addColorStop(0, object.glow);
-      glow.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = glow;
-      ctx.beginPath(); ctx.arc(px, py, object.size * 4.4, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = object.color;
-      ctx.beginPath(); ctx.arc(px, py, object.size, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,.65)";
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.arc(px, py, object.size + 1.8, 0, Math.PI * 2); ctx.stroke();
-    });
-
-    // Core
-    const coreGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 66);
-    coreGlow.addColorStop(0, "rgba(218,66,84,.28)");
-    coreGlow.addColorStop(1, "rgba(218,66,84,0)");
-    ctx.fillStyle = coreGlow;
-    ctx.beginPath(); ctx.arc(cx, cy, 66, 0, Math.PI * 2); ctx.fill();
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(.4);
-    ctx.beginPath();
-    ctx.moveTo(0, -25); ctx.lineTo(19, -8); ctx.lineTo(12, 24); ctx.lineTo(-14, 17); ctx.lineTo(-23, -9); ctx.closePath();
-    const coreGradient = ctx.createLinearGradient(-22, -23, 20, 24);
-    coreGradient.addColorStop(0, "#f17e80");
-    coreGradient.addColorStop(.48, "#a72b43");
-    coreGradient.addColorStop(1, "#3c1825");
-    ctx.fillStyle = coreGradient; ctx.fill();
-    ctx.strokeStyle = "rgba(255,215,199,.55)"; ctx.stroke();
-    ctx.restore();
-    ctx.fillStyle = "rgba(241,211,194,.72)";
-    ctx.font = "8px 'DM Mono', monospace";
-    ctx.fillText("CR / CORE", cx + 35, cy - 34);
+    name.textContent = record.name || "Crimson client";
+    const mb = (record.size / 1048576).toFixed(1);
+    meta.textContent = mb + " MB · saved in this browser";
+    badge.textContent = "SAVED";
+    badge.classList.add("ready");
+    $("#client-state").textContent = "CLIENT SAVED";
   }
 
-  function orbitLoop() {
-    if (!orbitRunning) return;
-    orbitTime += .009;
-    drawOrbit();
-    fpsCounter += 1;
-    const now = performance.now();
-    if (now - fpsStart > 1000) {
-      $("#frame-rate").textContent = String(Math.round((fpsCounter * 1000) / (now - fpsStart)));
-      fpsCounter = 0;
-      fpsStart = now;
+  async function refreshClientStatus() {
+    try { showStoredClient(await getClientRecord()); }
+    catch (error) {
+      $("#client-note").textContent = error.message;
+      $("#client-state").textContent = "STORAGE UNAVAILABLE";
     }
-    orbitFrame = window.requestAnimationFrame(orbitLoop);
   }
 
-  orbitToggle.addEventListener("click", function () {
-    orbitRunning = !orbitRunning;
-    orbitState.textContent = orbitRunning ? "IN MOTION" : "PAUSED";
-    orbitToggle.innerHTML = orbitRunning ? 'PAUSE MODEL <span>Ⅱ</span>' : 'RESUME MODEL <span>▶</span>';
-    if (orbitRunning) orbitLoop();
-    else window.cancelAnimationFrame(orbitFrame);
-  });
-  orbitRandomize.addEventListener("click", function () {
-    orbitObjects.forEach(function (obj) {
-      obj.phase = Math.random() * Math.PI * 2;
-      obj.speed = (Math.random() * .65 + .25) * (Math.random() > .5 ? 1 : -1);
-      obj.radius = Math.random() * .27 + .16;
-    });
-    orbitTime = Math.random() * 8;
-    drawOrbit();
-    showToast("Model reshuffled");
-  });
-  orbitCanvas.addEventListener("pointerdown", function (event) {
-    orbitDrag = true;
-    dragPoint = { x: event.clientX, y: event.clientY };
-    orbitCanvas.setPointerCapture(event.pointerId);
-  });
-  orbitCanvas.addEventListener("pointermove", function (event) {
-    const rect = orbitCanvas.getBoundingClientRect();
-    coordX.textContent = String(Math.round(event.clientX - rect.left)).padStart(3, "0");
-    coordY.textContent = String(Math.round(event.clientY - rect.top)).padStart(3, "0");
-    if (!orbitDrag || !dragPoint) return;
-    orbitOffsetX = Math.max(-35, Math.min(35, orbitOffsetX + (event.clientX - dragPoint.x) * .22));
-    orbitOffsetY = Math.max(-28, Math.min(28, orbitOffsetY + (event.clientY - dragPoint.y) * .22));
-    dragPoint = { x: event.clientX, y: event.clientY };
-    drawOrbit();
-  });
-  function stopOrbitDrag() { orbitDrag = false; dragPoint = null; }
-  orbitCanvas.addEventListener("pointerup", stopOrbitDrag);
-  orbitCanvas.addEventListener("pointercancel", stopOrbitDrag);
-  resizeOrbit();
-  if (orbitRunning) orbitLoop();
-  else {
-    orbitState.textContent = "PAUSED";
-    orbitToggle.innerHTML = 'RESUME MODEL <span>▶</span>';
-  }
-
-  // Palette generator
-  const paletteSwatches = $$(".swatch");
-  const paletteNames = ["After Hours", "Rust Signal", "Cold Ember", "Red Shift", "Night Glass", "Burnt Copper", "Quiet Static", "Deep Current"];
-  let paletteVersion = 1;
-  let currentHue = 0;
-  let palette = [];
-  let paletteName = paletteNames[0];
-
-  function hslToHex(h, s, l) {
-    s /= 100; l /= 100;
-    const k = function (n) { return (n + h / 30) % 12; };
-    const a = s * Math.min(l, 1 - l);
-    const f = function (n) {
-      const color = l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-      return Math.round(255 * color).toString(16).padStart(2, "0");
-    };
-    return ("#" + f(0) + f(8) + f(4)).toUpperCase();
-  }
-
-  function makePalette(hue) {
-    const base = (hue + Math.floor(Math.random() * 22) - 11 + 360) % 360;
-    const offsets = [0, 18, 48, 174, 204];
-    const sats = [62, 55, 49, 22, 18];
-    const lights = [39, 57, 76, 42, 20];
-    return offsets.map(function (offset, index) {
-      return hslToHex((base + offset) % 360, sats[index], lights[index]);
-    });
-  }
-
-  function renderPalette() {
-    palette.forEach(function (color, index) {
-      paletteSwatches[index].style.background = color;
-      $("span", paletteSwatches[index]).textContent = color;
-      paletteSwatches[index].setAttribute("aria-label", "Copy " + color);
-    });
-    $("#palette-name").textContent = paletteName;
-    $("#palette-version").textContent = String(paletteVersion).padStart(2, "0");
-    $("#hue-value").textContent = currentHue + "°";
-    $("#hue-slider").value = String(currentHue);
-    $("#preview-hex").textContent = palette[0];
-    $("#color-preview").style.setProperty("--preview-color", palette[0]);
-    $("#color-preview").style.setProperty("--preview-glow", palette[0] + "66");
-    $("#color-preview").style.background = "linear-gradient(135deg, " + palette[4] + ", " + palette[3] + " 60%, " + palette[0] + ")";
-    $("#css-output").textContent = palette.map(function (color, index) {
-      return "--color-0" + (index + 1) + ": " + color + ";";
-    }).join("\n");
-  }
-
-  async function copyText(value, successMessage) {
+  $("#import-client").addEventListener("click", () => $("#client-file-input").click());
+  $("#client-file-input").addEventListener("change", async event => {
+    const file = event.target.files && event.target.files[0];
+    event.target.value = "";
+    if (!file) return;
+    if (!/\.html?$/i.test(file.name)) { toast("Choose an HTML client file"); return; }
+    if (file.size < 2000000) { toast("That file looks too small to be a full Eaglercraft client"); return; }
+    $("#import-client").disabled = true;
+    $("#import-client").textContent = "CHECKING FILE…";
     try {
-      await navigator.clipboard.writeText(value);
-      showToast(successMessage || "Copied");
+      const source = await file.text();
+      if (!source.includes("1.12.2") || !source.includes("el-modapi")) {
+        throw new Error("This needs to be a patched Eaglercraft 1.12.2 HTML file. Open the Crimson Patcher first");
+      }
+      await putClientRecord({ id: "main", name: file.name, size: file.size, blob: file, savedAt: Date.now() });
+      await refreshClientStatus();
+      toast("Patched client saved on this device");
     } catch (error) {
-      const field = document.createElement("textarea");
-      field.value = value;
-      field.style.position = "fixed";
-      field.style.opacity = "0";
-      document.body.appendChild(field);
-      field.select();
-      const ok = document.execCommand("copy");
-      field.remove();
-      showToast(ok ? (successMessage || "Copied") : "Copy unavailable");
-    }
-  }
-
-  function regeneratePalette() {
-    paletteVersion += 1;
-    paletteName = paletteNames[Math.floor(Math.random() * paletteNames.length)];
-    palette = makePalette(currentHue);
-    renderPalette();
-    $("#palette-feedback").textContent = "New palette created. Click a swatch to copy its hex value.";
-  }
-
-  palette = makePalette(currentHue);
-  renderPalette();
-  $("#generate-palette").addEventListener("click", regeneratePalette);
-  $("#hue-slider").addEventListener("input", function (event) {
-    currentHue = Number(event.target.value);
-    palette = makePalette(currentHue);
-    renderPalette();
-    $("#palette-feedback").textContent = "Hue adjusted to " + currentHue + "°.";
-  });
-  paletteSwatches.forEach(function (swatch, index) {
-    swatch.addEventListener("click", function () { copyText(palette[index], palette[index] + " copied"); });
-  });
-  $("#copy-palette").addEventListener("click", function () { copyText(palette.join(", "), "Palette copied"); });
-  $("#copy-css").addEventListener("click", function () { copyText($("#css-output").textContent, "CSS copied"); });
-
-  // Local console — deliberately limited to local commands
-  const terminalScreen = $("#terminal-screen");
-  const terminalInput = $("#terminal-input");
-  const commandHistory = [];
-  let historyIndex = 0;
-
-  function printLine(text, className) {
-    const line = document.createElement("p");
-    line.className = "terminal-line" + (className ? " " + className : "");
-    line.textContent = text;
-    terminalScreen.appendChild(line);
-    terminalScreen.scrollTop = terminalScreen.scrollHeight;
-  }
-
-  function handleCommand(raw) {
-    const input = raw.trim();
-    if (!input) return;
-    printLine("› " + input, "terminal-muted");
-    const pieces = input.split(/\s+/);
-    const command = pieces[0].toLowerCase();
-    const argument = pieces.slice(1).join(" ");
-    switch (command) {
-      case "help":
-        printLine("AVAILABLE: help · clear · time · about · palette · orbit · open redroom", "terminal-success");
-        break;
-      case "clear":
-        terminalScreen.replaceChildren();
-        printLine("Console cleared.", "terminal-muted");
-        break;
-      case "time":
-        printLine("LOCAL TIME: " + new Date().toLocaleString(), "terminal-output");
-        break;
-      case "about":
-        printLine("CRIMSON is an interactive corner of the internet. Built for exploration.", "terminal-output");
-        break;
-      case "palette":
-        printLine("CURRENT PALETTE: " + palette.join("  "), "terminal-output");
-        break;
-      case "orbit":
-        orbitRandomize.click();
-        printLine("Orbital model reshuffled.", "terminal-success");
-        break;
-      case "open":
-        if (argument.toLowerCase() === "redroom") {
-          openRedroom();
-          printLine("UNLISTED ROOM FOUND.", "terminal-success");
-        } else {
-          printLine("No room by that name. Try: open redroom", "terminal-error");
-        }
-        break;
-      case "echo":
-        printLine(argument || "(empty)", "terminal-output");
-        break;
-      default:
-        printLine("Command not found: " + command + ". Try help.", "terminal-error");
-    }
-  }
-
-  $("#terminal-form").addEventListener("submit", function (event) {
-    event.preventDefault();
-    const value = terminalInput.value;
-    if (!value.trim()) return;
-    commandHistory.push(value);
-    historyIndex = commandHistory.length;
-    handleCommand(value);
-    terminalInput.value = "";
-  });
-  terminalInput.addEventListener("keydown", function (event) {
-    if (event.key === "ArrowUp") {
-      event.preventDefault();
-      historyIndex = Math.max(0, historyIndex - 1);
-      terminalInput.value = commandHistory[historyIndex] || "";
-    } else if (event.key === "ArrowDown") {
-      event.preventDefault();
-      historyIndex = Math.min(commandHistory.length, historyIndex + 1);
-      terminalInput.value = commandHistory[historyIndex] || "";
+      toast(error.message || "Could not save that client file");
+    } finally {
+      $("#import-client").disabled = false;
+      $("#import-client").innerHTML = "IMPORT PATCHED HTML";
     }
   });
-  $$(".inline-command").forEach(function (button) {
-    button.addEventListener("click", function () {
-      handleCommand(button.dataset.command);
-      terminalInput.focus();
+
+  $("#launch-client").addEventListener("click", async () => {
+    const tab = window.open("about:blank", "_blank");
+    if (!tab) { toast("Allow pop-ups for Crimson, then launch again"); return; }
+    tab.document.title = "Opening Crimson Client";
+    tab.document.body.style.cssText = "background:#100c0e;color:#f3e8e6;font:14px monospace;padding:30px";
+    tab.document.body.textContent = "Loading your saved client…";
+    try {
+      const record = await getClientRecord();
+      if (!record || !record.blob) {
+        tab.close();
+        showView("client");
+        toast("Import a patched client first");
+        return;
+      }
+      if (activeBlobUrl) URL.revokeObjectURL(activeBlobUrl);
+      activeBlobUrl = URL.createObjectURL(record.blob);
+      tab.location.replace(activeBlobUrl);
+      $("#client-state").textContent = "CLIENT OPENED";
+    } catch (error) {
+      tab.close();
+      toast(error.message || "Could not open the saved client");
+    }
+  });
+
+  $("#remove-client").addEventListener("click", async () => {
+    try {
+      await deleteClientRecord();
+      showStoredClient(null);
+      toast("Saved client removed from this browser");
+    } catch (error) { toast(error.message || "Could not remove saved client"); }
+  });
+
+  // Lightweight, original Minecraft-style pixel texture pack
+  const crcTable = (() => {
+    const table = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+      table[n] = c >>> 0;
+    }
+    return table;
+  })();
+
+  function crc32(bytes) {
+    let crc = 0xffffffff;
+    for (let i = 0; i < bytes.length; i++) crc = crcTable[(crc ^ bytes[i]) & 255] ^ (crc >>> 8);
+    return (crc ^ 0xffffffff) >>> 0;
+  }
+
+  function u16(value) { return [value & 255, (value >>> 8) & 255]; }
+  function u32(value) { return [value & 255, (value >>> 8) & 255, (value >>> 16) & 255, (value >>> 24) & 255]; }
+  function joinBytes(parts) {
+    let length = 0;
+    parts.forEach(part => { length += part.length; });
+    const out = new Uint8Array(length);
+    let offset = 0;
+    parts.forEach(part => { out.set(part, offset); offset += part.length; });
+    return out;
+  }
+
+  async function canvasPNG(draw) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 16;
+    canvas.height = 16;
+    const context = canvas.getContext("2d");
+    context.imageSmoothingEnabled = false;
+    draw(context);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("Could not render a texture");
+    return new Uint8Array(await blob.arrayBuffer());
+  }
+
+  function seeded(seed) {
+    let value = seed >>> 0;
+    return () => {
+      value = (value * 1664525 + 1013904223) >>> 0;
+      return value / 4294967296;
+    };
+  }
+
+  async function makeTexturePack() {
+    const files = [];
+    const add = async (path, draw) => files.push({ name: path, data: await canvasPNG(draw) });
+    const noise = (ctx, colors, seed, count) => {
+      const rand = seeded(seed);
+      for (let i = 0; i < count; i++) {
+        ctx.fillStyle = colors[Math.floor(rand() * colors.length)];
+        ctx.fillRect(Math.floor(rand() * 16), Math.floor(rand() * 16), 1 + Math.floor(rand() * 2), 1 + Math.floor(rand() * 2));
+      }
+    };
+
+    await add("assets/minecraft/textures/blocks/stone.png", ctx => {
+      ctx.fillStyle = "#77777d"; ctx.fillRect(0,0,16,16);
+      noise(ctx, ["#66666d","#898990","#a0a0a2","#585961","#777177"], 41, 75);
+      ctx.fillStyle = "#a9a3a1"; ctx.fillRect(2,3,3,1); ctx.fillRect(11,10,2,1);
     });
-  });
-  $$("[data-open-console]").forEach(function (button) {
-    button.addEventListener("click", function () {
-      document.querySelector("#console").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
-      window.setTimeout(function () { terminalInput.focus(); }, reduceMotion ? 0 : 450);
+    await add("assets/minecraft/textures/blocks/cobblestone.png", ctx => {
+      ctx.fillStyle = "#55565b"; ctx.fillRect(0,0,16,16);
+      const blocks = [[0,0,6,5],[7,0,5,4],[13,0,3,6],[0,6,4,4],[5,5,6,5],[12,7,4,4],[0,11,6,5],[7,11,5,5],[13,12,3,4]];
+      blocks.forEach((b,i) => { ctx.fillStyle = ["#77777d","#89898c","#65656c","#707077"][i%4]; ctx.fillRect(...b); ctx.fillStyle = "#a3a1a0"; ctx.fillRect(b[0]+1,b[1]+1,Math.max(1,b[2]-3),1); });
+      noise(ctx, ["#4d4d55","#b1a6a0"], 12, 20);
     });
+    await add("assets/minecraft/textures/blocks/dirt.png", ctx => {
+      ctx.fillStyle = "#79533d"; ctx.fillRect(0,0,16,16);
+      noise(ctx, ["#63422f","#8c654a","#9a7250","#583b2e","#a07b58"], 3, 85);
+    });
+    await add("assets/minecraft/textures/blocks/grass_top.png", ctx => {
+      ctx.fillStyle = "#66864b"; ctx.fillRect(0,0,16,16);
+      noise(ctx, ["#587a40","#759653","#829c5a","#9aa76b","#4f713b"], 17, 72);
+      ctx.fillStyle = "#d0c58a"; ctx.fillRect(4,2,1,1); ctx.fillRect(12,12,1,1);
+    });
+    await add("assets/minecraft/textures/blocks/grass_side.png", ctx => {
+      ctx.fillStyle = "#79533d"; ctx.fillRect(0,0,16,16);
+      ctx.fillStyle = "#66864b"; ctx.fillRect(0,0,16,4);
+      noise(ctx, ["#587a40","#789652","#8ea66a"], 19, 28);
+      noise(ctx, ["#63422f","#8c654a","#9a7250","#583b2e"], 21, 56);
+      ctx.fillStyle = "#5d7b43"; ctx.fillRect(0,4,2,2); ctx.fillRect(11,4,2,1);
+    });
+    await add("assets/minecraft/textures/blocks/planks_oak.png", ctx => {
+      ctx.fillStyle = "#9a7049"; ctx.fillRect(0,0,16,16);
+      for (let y=0;y<16;y+=4) { ctx.fillStyle = y%8===0 ? "#b38355" : "#8b613d"; ctx.fillRect(0,y,16,1); ctx.fillStyle = "#c49561"; ctx.fillRect(2,y+1,12,1); }
+      ctx.fillStyle = "#68462f"; ctx.fillRect(5,2,1,1); ctx.fillRect(6,3,1,1); ctx.fillRect(12,10,1,1);
+      noise(ctx, ["#a97b4e","#785236"], 31, 18);
+    });
+    await add("assets/minecraft/textures/blocks/obsidian.png", ctx => {
+      ctx.fillStyle = "#282331"; ctx.fillRect(0,0,16,16);
+      noise(ctx, ["#392d43","#211d2e","#473047","#33263d"], 77, 65);
+      ctx.strokeStyle = "#794057"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(2,3); ctx.lineTo(5,6); ctx.lineTo(4,10); ctx.lineTo(9,13); ctx.stroke();
+      ctx.fillStyle = "#b23b50"; ctx.fillRect(5,7,1,1); ctx.fillRect(9,12,1,1);
+    });
+    await add("assets/minecraft/textures/blocks/netherrack.png", ctx => {
+      ctx.fillStyle = "#6d3036"; ctx.fillRect(0,0,16,16);
+      noise(ctx, ["#8a4144","#55262f","#a14a48","#74343d","#b75b51"], 93, 90);
+      ctx.fillStyle = "#cf7160"; ctx.fillRect(4,4,2,1); ctx.fillRect(11,12,2,1);
+    });
+
+    files.push({ name: "pack.mcmeta", data: new TextEncoder().encode(JSON.stringify({ pack: { pack_format: 3, description: "Crimson Client · Original 16x block textures" } }, null, 2)) });
+    const icon = document.createElement("canvas");
+    icon.width = 64; icon.height = 64;
+    const cx = icon.getContext("2d");
+    cx.fillStyle = "#191116"; cx.fillRect(0,0,64,64);
+    cx.fillStyle = "#8d1c31"; cx.fillRect(11,11,42,42);
+    cx.fillStyle = "#d94a5a"; cx.fillRect(17,17,30,30);
+    cx.fillStyle = "#f2a3a6"; cx.fillRect(25,9,14,46);
+    cx.fillStyle = "#5a1425"; cx.fillRect(9,25,46,14);
+    const iconBlob = await new Promise(resolve => icon.toBlob(resolve,"image/png"));
+    files.push({ name: "pack.png", data: new Uint8Array(await iconBlob.arrayBuffer()) });
+
+    const locals = [];
+    const centrals = [];
+    let offset = 0;
+    files.forEach(file => {
+      const name = new TextEncoder().encode(file.name);
+      const data = file.data;
+      const crc = crc32(data);
+      const local = joinBytes([
+        new Uint8Array(u32(0x04034b50)), new Uint8Array(u16(20)), new Uint8Array(u16(0)), new Uint8Array(u16(0)),
+        new Uint8Array(u16(0)), new Uint8Array(u16(0)), new Uint8Array(u32(crc)), new Uint8Array(u32(data.length)),
+        new Uint8Array(u32(data.length)), new Uint8Array(u16(name.length)), new Uint8Array(u16(0)), name, data
+      ]);
+      const central = joinBytes([
+        new Uint8Array(u32(0x02014b50)), new Uint8Array(u16(20)), new Uint8Array(u16(20)), new Uint8Array(u16(0)),
+        new Uint8Array(u16(0)), new Uint8Array(u16(0)), new Uint8Array(u16(0)), new Uint8Array(u32(crc)),
+        new Uint8Array(u32(data.length)), new Uint8Array(u32(data.length)), new Uint8Array(u16(name.length)),
+        new Uint8Array(u16(0)), new Uint8Array(u16(0)), new Uint8Array(u16(0)), new Uint8Array(u32(0)),
+        new Uint8Array(u32(offset)), name
+      ]);
+      locals.push(local); centrals.push(central); offset += local.length;
+    });
+    const centralData = joinBytes(centrals);
+    const end = joinBytes([
+      new Uint8Array(u32(0x06054b50)), new Uint8Array(u16(0)), new Uint8Array(u16(0)),
+      new Uint8Array(u16(files.length)), new Uint8Array(u16(files.length)),
+      new Uint8Array(u32(centralData.length)), new Uint8Array(u32(offset)), new Uint8Array(u16(0))
+    ]);
+    const zip = new Blob([...locals, centralData, end], { type: "application/zip" });
+    const url = URL.createObjectURL(zip);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "Crimson-Resource-Pack-1.12.zip";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    toast("Crimson resource pack built");
+  }
+
+  $("#download-textures").addEventListener("click", makeTexturePack);
+  $("#download-textures-side").addEventListener("click", makeTexturePack);
+
+  // Launcher preferences
+  const motionToggle = $("#reduce-motion");
+  const savedMotion = localStorage.getItem("crimson-reduce-motion") === "true";
+  motionToggle.checked = savedMotion;
+  document.body.classList.toggle("reduce-motion", savedMotion);
+  motionToggle.addEventListener("change", () => {
+    const enabled = motionToggle.checked;
+    document.body.classList.toggle("reduce-motion", enabled);
+    localStorage.setItem("crimson-reduce-motion", String(enabled));
+    toast(enabled ? "Reduced motion enabled" : "Motion restored");
   });
 
-  // Unlisted room
-  const redroom = $("#redroom");
-  function openRedroom() {
-    redroom.hidden = false;
-    $("#redroom-close").focus();
+  // Pointer tilt on the block scene, capped to keep it subtle
+  const scene = $("#voxel-scene");
+  if (scene && window.matchMedia("(pointer:fine)").matches) {
+    scene.addEventListener("pointermove", event => {
+      if (document.body.classList.contains("reduce-motion")) return;
+      const rect = scene.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      scene.style.setProperty("--scene-tilt-x", (y * -4).toFixed(2) + "deg");
+      scene.style.setProperty("--scene-tilt-y", (x * 5).toFixed(2) + "deg");
+    }, { passive: true });
+    scene.addEventListener("pointerleave", () => {
+      scene.style.setProperty("--scene-tilt-x", "0deg");
+      scene.style.setProperty("--scene-tilt-y", "0deg");
+    });
   }
-  function closeRedroom() {
-    redroom.hidden = true;
-    $("#redroom-open").focus();
-  }
-  $("#redroom-open").addEventListener("click", openRedroom);
-  $("#redroom-close").addEventListener("click", closeRedroom);
-  $("#redroom-return").addEventListener("click", closeRedroom);
-  redroom.addEventListener("click", function (event) {
-    if (event.target === redroom) closeRedroom();
-  });
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && !redroom.hidden) closeRedroom();
-    if (event.key.toLowerCase() === "k" && (event.ctrlKey || event.metaKey)) {
-      event.preventDefault();
-      terminalInput.focus();
-      document.querySelector("#console").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
-    }
-  });
 
-}());
+  refreshClientStatus();
+})();
