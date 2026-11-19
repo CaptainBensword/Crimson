@@ -444,7 +444,14 @@ function openTrack(track) {
     player.preload = "metadata";
     player.src = track.audio;
     player.setAttribute("aria-label", "Audio player for " + track.title);
-    addAssetSection(elements.dialogContent, "LISTEN", player);
+    const listenPanel = document.createElement("div");
+    listenPanel.className = "preview-panel";
+    listenPanel.appendChild(player);
+    const audioDownloads = document.createElement("div");
+    audioDownloads.className = "asset-links";
+    addAssetLink(audioDownloads, "Download MP3 ↓", track.audio, true);
+    listenPanel.appendChild(audioDownloads);
+    addAssetSection(elements.dialogContent, "LISTEN", listenPanel);
   } else if (track.playback) {
     const preview = document.createElement("div");
     preview.className = "preview-panel";
