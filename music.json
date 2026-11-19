@@ -4,7 +4,7 @@
     "title": "Storm Frontier",
     "category": "compositions",
     "project": "Talon",
-    "description": "An original adventure theme for solo French horn in F. The written part is in D minor, 4/4, at quarter note = 112. The Listen preview is synthesized from the same note sequence as the score.",
+    "description": "An original adventure theme for solo French horn in F. The written part is in D minor, 4/4, at quarter note = 112. The Listen button plays a browser-rendered preview from the same note sequence as the score.",
     "date": "2026-11-19",
     "genres": [
       "Adventure",
@@ -355,6 +355,7 @@
         "label": "MIDI",
         "file": "music/midi/storm-frontier-horn.mid"
       }
-    ]
+    ],
+    "cover": "music/covers/storm-frontier-cover.jpg"
   }
 ]
