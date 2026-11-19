@@ -356,6 +356,7 @@
         "file": "music/midi/storm-frontier-horn.mid"
       }
     ],
-    "cover": "music/covers/storm-frontier-cover.svg"
+    "cover": "music/covers/storm-frontier-cover.svg",
+    "audio": "music/audio/storm-frontier-horn.mp3"
   }
 ]
