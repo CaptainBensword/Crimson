@@ -33,14 +33,11 @@ jobs:
           fi
           mkdir -p music/audio
           fluidsynth -ni -g 0.75 -r 44100 "$SOUNDFONT" music/midi/storm-frontier-horn.mid -F /tmp/storm-frontier-horn.wav
-          ffmpeg -y -i /tmp/storm-frontier-horn.wav -i music/covers/storm-frontier-cover.svg \
-            -map 0:a -map 1:v -c:a libmp3lame -b:a 160k -ac 2 \
-            -c:v mjpeg -disposition:v:0 attached_pic \
+          ffmpeg -y -i /tmp/storm-frontier-horn.wav \
+            -c:a libmp3lame -b:a 160k -ac 2 \
             -metadata title="Storm Frontier" \
             -metadata artist="Talon" \
             -metadata album="Crimson" \
-            -metadata:s:v title="Cover" \
-            -metadata:s:v comment="Cover (front)" \
             -id3v2_version 3 music/audio/storm-frontier-horn.mp3
 
       - name: Commit listening audio
