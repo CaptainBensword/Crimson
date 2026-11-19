@@ -17,6 +17,7 @@
   const pageNames = {
     overview: "OVERVIEW",
     client: "PLAY",
+    servers: "SERVERS",
     mods: "MOD LIBRARY",
     appearance: "APPEARANCE",
     settings: "SETTINGS"
@@ -35,6 +36,32 @@
   $$("[data-go]").forEach(button => button.addEventListener("click", () => showView(button.dataset.go)));
   const initialView = location.hash.replace("#", "");
   if (pageNames[initialView]) showView(initialView);
+
+  $(".copy-server").forEach(button => {
+    button.addEventListener("click", async () => {
+      const address = button.dataset.address || "";
+      if (!address) return;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(address);
+        } else {
+          const field = document.createElement("textarea");
+          field.value = address;
+          field.setAttribute("readonly", "");
+          field.style.position = "fixed";
+          field.style.opacity = "0";
+          document.body.appendChild(field);
+          field.select();
+          const copied = document.execCommand("copy");
+          field.remove();
+          if (!copied) throw new Error("Clipboard is unavailable");
+        }
+        toast((button.dataset.name || "Server") + " address copied");
+      } catch (error) {
+        toast("Copy unavailable — " + address);
+      }
+    });
+  });
 
   // IndexedDB keeps the user's patched client on this device, without uploading it
   const DB_NAME = "crimson-client-store";
