@@ -18,6 +18,7 @@ The patcher injects the EaglerLite Mod API and bundles Crimson's modules into th
 
 | Module | What it does | Default |
 | --- | --- | --- |
+| Crimson Interface | Dark Crimson styling for the in-game F6 mod manager | On |
 | Crimson HUD | FPS, frame time, keystrokes, and left/right CPS overlays | On |
 | Crimson Crosshair | Adjustable center reticle with color, size, gap, and thickness options | On |
 | Toggle Sprint | Toggle sprint using Ctrl + Shift + G | Off |
