@@ -1,16 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#171215"/><stop offset=".55" stop-color="#0b0b0d"/><stop offset="1" stop-color="#211016"/></linearGradient>
-    <radialGradient id="glow"><stop stop-color="#a52d43" stop-opacity=".62"/><stop offset="1" stop-color="#a52d43" stop-opacity="0"/></radialGradient>
-    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0787d"/><stop offset=".55" stop-color="#b62f46"/><stop offset="1" stop-color="#421724"/></linearGradient>
-  </defs>
-  <rect width="1200" height="630" fill="url(#bg)"/>
-  <circle cx="890" cy="320" r="330" fill="url(#glow)"/>
-  <g opacity=".17" stroke="#d4b8ad" fill="none"><circle cx="890" cy="320" r="245"/><circle cx="890" cy="320" r="190"/><circle cx="890" cy="320" r="140" stroke-dasharray="4 10"/><path d="M530 320H1190M890 0V630"/></g>
-  <path d="M890 178l108 93-41 174-155-25-62-153z" fill="url(#red)" stroke="#f3b5a8" stroke-opacity=".55" stroke-width="2" transform="rotate(-19 890 320)"/>
-  <path d="M0 70H1200M0 560H1200" stroke="#d8c5b8" stroke-opacity=".13"/>
-  <text x="90" y="255" fill="#f1eee9" font-family="Arial, sans-serif" font-size="118" font-weight="700" letter-spacing="-10">CRIMSON<tspan fill="#f05260">.</tspan></text>
-  <text x="99" y="316" fill="#a8a0a0" font-family="monospace" font-size="18" letter-spacing="7">INTERACTIVE INDEX / 001</text>
-  <text x="100" y="510" fill="#766e72" font-family="monospace" font-size="14" letter-spacing="4">OBSERVATORY  ·  WORKSHOP  ·  CONSOLE</text>
-  <text x="1100" y="580" text-anchor="end" fill="#786d70" font-family="monospace" font-size="13">TALON / 2026</text>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#241118"/><stop offset=".55" stop-color="#100c0e"/><stop offset="1" stop-color="#1c1118"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#c6314a" stop-opacity=".58"/><stop offset="1" stop-color="#c6314a" stop-opacity="0"/></radialGradient>
+ <linearGradient id="front" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e15b69"/><stop offset="1" stop-color="#791a31"/></linearGradient>
+ <linearGradient id="side" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#8c1e36"/><stop offset="1" stop-color="#421422"/></linearGradient>
+ <linearGradient id="top" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f08b8e"/><stop offset="1" stop-color="#b52b43"/></linearGradient>
+ <pattern id="grid" width="38" height="38" patternUnits="userSpaceOnUse"><path d="M38 0H0V38" fill="none" stroke="#dcbfc4" stroke-opacity=".09" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="630" fill="url(#bg)"/><rect width="1200" height="630" fill="url(#grid)"/>
+<circle cx="900" cy="300" r="370" fill="url(#glow)"/>
+<g opacity=".19" stroke="#d98b94" fill="none"><path d="M695 300H1170M925 55V555"/><circle cx="925" cy="300" r="220"/><circle cx="925" cy="300" r="170" stroke-dasharray="3 9"/><path d="M700 450L1140 150"/></g>
+<g transform="translate(920 300) rotate(-17)">
+ <path d="M0-158L145-78V83L0 164L-145 83V-78Z" fill="#3b1423" stroke="#e7828c" stroke-opacity=".5" stroke-width="2" transform="translate(0 19)"/>
+ <path d="M0-158L145-78L0 3L-145-78Z" fill="url(#top)" stroke="#f8b5b8" stroke-opacity=".65" stroke-width="2"/>
+ <path d="M-145-78L0 3V164L-145 83Z" fill="url(#front)" stroke="#e7838d" stroke-opacity=".5" stroke-width="2"/>
+ <path d="M0 3L145-78V83L0 164Z" fill="url(#side)" stroke="#d46a78" stroke-opacity=".55" stroke-width="2"/>
+ <path d="M-92-79L-2-127L87-77L0-29Z" fill="none" stroke="#ffd0cf" stroke-opacity=".35" stroke-width="3"/>
+ <path d="M-107 2L-20 52L-20 127" fill="none" stroke="#ffd2d3" stroke-opacity=".25" stroke-width="3"/>
+ <path d="M22 49L113-3" fill="none" stroke="#ec8390" stroke-opacity=".45" stroke-width="3"/>
+</g>
+<g opacity=".85"><path d="M80 83H285" stroke="#dc4356" stroke-width="2"/><path d="M80 92H174" stroke="#7c3544" stroke-width="1"/></g>
+<text x="82" y="219" fill="#f7e9e9" font-family="Arial,sans-serif" font-size="86" font-weight="900" letter-spacing="-5">CRIMSON</text>
+<text x="86" y="293" fill="#e45a69" font-family="Arial,sans-serif" font-size="72" font-weight="900" letter-spacing="-3">CLIENT</text>
+<text x="91" y="350" fill="#ba9ca2" font-family="monospace" font-size="17" letter-spacing="5">EAGLERCRAFT 1.12.2 / WEB</text>
+<g transform="translate(90 440)" font-family="monospace" font-size="12" letter-spacing="2">
+ <rect width="150" height="37" rx="3" fill="#3a1924" stroke="#944253"/><text x="75" y="23" text-anchor="middle" fill="#f0cbd0">CUSTOM HUD</text>
+ <rect x="164" width="142" height="37" rx="3" fill="#24171e" stroke="#62404a"/><text x="235" y="23" text-anchor="middle" fill="#d7bec2">QOL MODS</text>
+ <rect x="320" width="164" height="37" rx="3" fill="#24171e" stroke="#62404a"/><text x="402" y="23" text-anchor="middle" fill="#d7bec2">16× TEXTURES</text>
+</g>
+<text x="1090" y="578" text-anchor="end" fill="#846b72" font-family="monospace" font-size="13" letter-spacing="3">TALON / BUILD 001</text>
 </svg>
