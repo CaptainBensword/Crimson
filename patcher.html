@@ -1811,7 +1811,8 @@ function buildWindow() {
   foot.className = 'el-mw-foot';
   var btns = document.createElement('div');
   btns.className = 'el-mw-btns';
-  var bImport = mcButton('Import Mod', { width: 80, onClick: function() {
+  var bImport = mcButton('Import SP Mod', { width: 92, onClick: function() {
+    if (!isCrimsonSingleplayer()) { toast('Open a local singleplayer world to import mods', 3200, 'err'); return; }
     var fi = document.getElementById('el-mw-file');
     if (fi) fi.click();
   } });
@@ -2095,6 +2096,10 @@ function persistEnabled(id, on) {
   if (!ok) { try { if (window.opener) window.opener.postMessage({ type: 'el:mod-state', id: id, enabled: on }, '*'); } catch (e1) {} }
 }
 function setEnabled(mod, on) {
+  if (on && mod._crimsonSingleplayerOnly && !isCrimsonSingleplayer()) {
+    toast('This uploaded mod is available in singleplayer worlds only', 3200, 'err');
+    return;
+  }
   mod.enabled = on;
   lsSet('elmod:state:' + mod.id, on ? '1' : '0');
   persistEnabled(mod.id, on);
@@ -2168,6 +2173,25 @@ function extractModMetaFrom(code) {
   return meta;
 }
 var _srcById = {};
+var _crimsonCustomMods = Object.create(null);
+var _crimsonPendingCustomMods = [];
+var _crimsonExternalSession = false;
+function isCrimsonSingleplayer() {
+  return !!(EL.game && EL.game.inWorld && EL.game.inWorld() && !_crimsonExternalSession);
+}
+function loadPendingCustomMods() {
+  if (!isCrimsonSingleplayer() || !_crimsonPendingCustomMods.length) return;
+  var pending = _crimsonPendingCustomMods.slice();
+  _crimsonPendingCustomMods.length = 0;
+  for (var i = 0; i < pending.length; i++) addModScript(pending[i]);
+  if (_winOpen) renderWinList();
+}
+function disableCustomMods() {
+  for (var i = 0; i < EL.mods.length; i++) {
+    var mod = EL.mods[i];
+    if (mod._crimsonSingleplayerOnly && mod.enabled) setEnabled(mod, false);
+  }
+}
 function addModScript(m) {
   if (!m || !m.id || !m.code || typeof m.code !== 'string') return;
   try { if (m.enabled === true || m.enabled === false) lsSet('elmod:state:' + m.id, m.enabled ? '1' : '0'); } catch (eS) {}
@@ -2189,7 +2213,12 @@ function injectBootMods() {
   var seen = {};
   var i;
   for (i = 0; i < own.length; i++) {
-    if (own[i] && own[i].id && !seen[own[i].id]) { seen[own[i].id] = 1; addModScript(own[i]); }
+    if (own[i] && own[i].id && !seen[own[i].id]) {
+      seen[own[i].id] = 1;
+      _crimsonCustomMods[own[i].id] = true;
+      if (isCrimsonSingleplayer()) addModScript(own[i]);
+      else _crimsonPendingCustomMods.push(own[i]);
+    }
   }
   for (i = 0; i < bootMods.length; i++) {
     if (bootMods[i] && bootMods[i].id && !seen[bootMods[i].id]) { seen[bootMods[i].id] = 1; addModScript(bootMods[i]); }
@@ -2230,6 +2259,7 @@ function persistImported(rec) {
 }
 
 function importOneMod(rec, stats) {
+  if (!isCrimsonSingleplayer()) throw new Error('singleplayer only');
   var code = String((rec && rec.code) || '');
   if (!code) throw new Error('empty');
   if (!/EL\s*\.\s*registerMod\s*\(/.test(code) && code.indexOf('EL' + String.fromCharCode(92) + 'u002eregisterMod') < 0) throw new Error('not a mod');
@@ -2240,6 +2270,8 @@ function importOneMod(rec, stats) {
   var out = { id: id, name: meta.name && meta.name !== 'mod' ? meta.name : ((rec && rec.name) || id), version: (rec && rec.version) || meta.version || '1.0.0', author: (rec && rec.author) || meta.author || '', desc: (rec && rec.desc) || meta.desc || '', enabled: wasDisabled ? false : true, code: code };
   var exists = false;
   for (var i = 0; i < EL.mods.length; i++) { if (EL.mods[i].id === id) exists = true; }
+  if (exists && !_crimsonCustomMods[id]) throw new Error('built-in Crimson mods cannot be replaced');
+  _crimsonCustomMods[id] = true;
   if (wasDisabled) { try { lsSet('elmod:state:' + id, '0'); } catch (eSt) {} }
   if (!exists) {
     var s = document.createElement('script');
@@ -2268,6 +2300,7 @@ function handleImportText(text, name, stats) {
   importOneMod({ id: '', name: String(name || 'mod').replace(/\.js$/i, ''), code: t }, stats);
 }
 function importModFiles(files) {
+  if (!isCrimsonSingleplayer()) { toast('Custom mods can only be imported in a local singleplayer world', 3600, 'err'); return; }
   var list = [];
   for (var i = 0; i < files.length; i++) list.push(files[i]);
   if (!list.length) return;
@@ -2597,13 +2630,16 @@ EL.registerMod = function(meta, init) {
   if (!id) { EL.log('mod rejected: missing id'); return null; }
   if (_reservedIds[id]) { EL.log('mod rejected: reserved id ' + id); return null; }
   var stored = lsGet('elmod:state:' + id, null);
+  var initiallyEnabled = stored === null ? (meta.enabled === false ? false : true) : (stored === '1');
+  if (_crimsonCustomMods[id] && !isCrimsonSingleplayer()) initiallyEnabled = false;
   var mod = {
     id: id,
     name: String(meta.name || id),
     version: String(meta.version || '1.0.0'),
     author: String(meta.author || ''),
     description: String(meta.description || ''),
-    enabled: stored === null ? (meta.enabled === false ? false : true) : (stored === '1'),
+    enabled: initiallyEnabled,
+    _crimsonSingleplayerOnly: !!_crimsonCustomMods[id],
     error: null,
     _init: (typeof init === 'function') ? init : null,
     _initialized: false,
@@ -2622,6 +2658,7 @@ EL.registerMod = function(meta, init) {
 };
 
 function runModInit(mod) {
+  if (mod._crimsonSingleplayerOnly && !isCrimsonSingleplayer()) { mod.enabled = false; return; }
   if (!mod._init || mod._initialized || !mod.enabled) return;
   mod._initialized = true;
   var api = facade(mod);
@@ -2658,6 +2695,21 @@ function runModInit(mod) {
 
 try { Object.defineProperty(window, 'EL', { value: EL, writable: true, configurable: true }); } catch (eG1) { window.EL = EL; }
 try { Object.defineProperty(window, 'EaglerLite', { value: EL, writable: true, configurable: true }); } catch (eG2) { window.EaglerLite = EL; }
+
+EL.events.on('net:open', function() {
+  _crimsonExternalSession = true;
+  disableCustomMods();
+});
+EL.events.on('net:connected', function() {
+  _crimsonExternalSession = true;
+  disableCustomMods();
+});
+EL.events.on('game:world-enter', function() { loadPendingCustomMods(); });
+EL.events.on('game:world-exit', function() {
+  disableCustomMods();
+  _crimsonExternalSession = false;
+});
+EL.events.on('game:title', function() { _crimsonExternalSession = false; });
 
 injectBootMods();
 
