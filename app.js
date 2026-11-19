@@ -82,6 +82,7 @@ function normalizeTrack(track) {
     date: typeof track.date === "string" ? track.date : "",
     genres: genres,
     audio: safeAssetPath(track.audio),
+    cover: safeAssetPath(track.cover),
     score: safeAssetPath(track.score),
     parts: Array.isArray(track.parts) ? track.parts.filter(function (part) {
       return part && typeof part.instrument === "string" && safeAssetPath(part.file);
@@ -291,10 +292,16 @@ function makeTrackRow(track) {
   button.className = "track-open";
   button.setAttribute("aria-label", "Open details for " + track.title);
 
-  const symbol = document.createElement("span");
-  symbol.className = "track-symbol";
-  symbol.setAttribute("aria-hidden", "true");
-  symbol.innerHTML = ICONS[track.category] || ICONS.other;
+  const symbol = track.cover ? document.createElement("img") : document.createElement("span");
+  symbol.className = track.cover ? "track-cover" : "track-symbol";
+  symbol.setAttribute("aria-hidden", track.cover ? "false" : "true");
+  if (track.cover) {
+    symbol.src = track.cover;
+    symbol.alt = "Cover artwork for " + track.title;
+    symbol.loading = "lazy";
+  } else {
+    symbol.innerHTML = ICONS[track.category] || ICONS.other;
+  }
 
   const copy = document.createElement("span");
   copy.className = "track-copy";
@@ -403,6 +410,14 @@ function addAssetSection(parent, heading, content) {
 function openTrack(track) {
   stopPlayback();
   elements.dialogContent.replaceChildren();
+
+  if (track.cover) {
+    const cover = document.createElement("img");
+    cover.className = "dialog-cover";
+    cover.src = track.cover;
+    cover.alt = "Cover artwork for " + track.title;
+    elements.dialogContent.appendChild(cover);
+  }
 
   const title = document.createElement("h2");
   title.className = "dialog-title";
