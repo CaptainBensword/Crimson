@@ -256,6 +256,7 @@ function noteScreen(n, w, h, s) {
   if (n && /GuiIngameMenu$/.test(n)) emit('game:pause', { screen: n });
 }
 
+var _bootOptOverrides = Object.create(null);
 var ourOpts = {};
 var _srcPatches = [];
 var _accessorInstalled = false;
@@ -270,7 +271,7 @@ function installAccessor(force) {
         try {
           if (v && typeof v === 'object') {
             for (var k in v) {
-              if (Object.prototype.hasOwnProperty.call(v, k) && !Object.prototype.hasOwnProperty.call(ourOpts, k)) ourOpts[k] = v[k];
+              if (Object.prototype.hasOwnProperty.call(v, k) && !Object.prototype.hasOwnProperty.call(_bootOptOverrides, k)) ourOpts[k] = v[k];
             }
           }
         } catch (e) {}
@@ -281,15 +282,25 @@ function installAccessor(force) {
 }
 (function applyBootOpts() {
   var o = EL.boot.opts || {};
-  ourOpts.relays = (o.relays && o.relays.length) ? o.relays : [
-    { addr: 'wss://relay.deev.is/', comment: 'lax1dude relay #1', primary: true },
-    { addr: 'wss://relay.lax1dude.net/', comment: 'lax1dude relay #2', primary: false },
-    { addr: 'wss://relay.shhnowisnottheti.me/', comment: 'ayunami relay #1', primary: false }
-  ];
-  ourOpts.servers = Array.isArray(o.servers) ? o.servers : [];
-  if (o.joinServer) ourOpts.joinServer = o.joinServer;
-  if (o.joinCode) ourOpts.joinCode = o.joinCode;
-  if (o.lang) ourOpts.lang = o.lang;
+  if (o.relays && o.relays.length) {
+    ourOpts.relays = o.relays;
+    _bootOptOverrides.relays = true;
+  } else {
+    ourOpts.relays = [
+      { addr: 'wss://relay.deev.is/', comment: 'lax1dude relay #1', primary: true },
+      { addr: 'wss://relay.lax1dude.net/', comment: 'lax1dude relay #2', primary: false },
+      { addr: 'wss://relay.shhnowisnottheti.me/', comment: 'ayunami relay #1', primary: false }
+    ];
+  }
+  if (Array.isArray(o.servers) && o.servers.length) {
+    ourOpts.servers = o.servers;
+    _bootOptOverrides.servers = true;
+  } else {
+    ourOpts.servers = [];
+  }
+  if (o.joinServer) { ourOpts.joinServer = o.joinServer; _bootOptOverrides.joinServer = true; }
+  if (o.joinCode) { ourOpts.joinCode = o.joinCode; _bootOptOverrides.joinCode = true; }
+  if (o.lang) { ourOpts.lang = o.lang; _bootOptOverrides.lang = true; }
   ourOpts.hooks = {
     screenChanged: function(n, w, h, s, mx, my) {
       noteScreen(n === undefined ? null : n, w, h, s);
@@ -307,6 +318,7 @@ function installAccessor(force) {
     },
     crashReportShow: function(r) { emit('game:crash', { report: r }); return r; }
   };
+  _bootOptOverrides.hooks = true;
 })();
 
 installAccessor();
