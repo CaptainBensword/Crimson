@@ -1,62 +1,33 @@
 # Crimson
 
-A music library for recordings, sheet music, game music, podcast and video music, compositions, and other work.
+Crimson is a music library for original recordings, sheet music, game music, podcast and video music, compositions, and related files.
 
-## Site files
+## Site
 
-- **index.html** — library page
-- **about.html** — about page
-- **styles.css** — layout and styling
-- **app.js** — search, collection filters, sorting, and piece details
-- **music.json** — catalog entries
+- `index.html` — music library, search and collection filters
+- `about.html` — about Crimson
+- `app.js` and `styles.css` — catalog behavior and design
+- `music.json` — public music catalog
+- `admin.html` — private admin entry point
+- `worker/` — server-side admin API
+
+## First composition
+
+**Storm Frontier** is an original French horn in F piece by Talon. Its score is written in D minor, 4/4, at quarter note = 112. The preview on the site is synthesized from the same note sequence stored in `music.json`.
+
+Files:
+- `music/scores/storm-frontier-horn.pdf`
+- `music/musicxml/storm-frontier-horn.musicxml`
+- `music/midi/storm-frontier-horn.mid`
 
 ## Publish with GitHub Pages
 
-1. Open the repository's **Settings**.
-2. Open **Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**.
-4. Choose the **main** branch and the **/(root)** folder, then save.
+In repository **Settings → Pages**, select **Deploy from a branch**, choose `main` and `/(root)`, then save.
 
-## Adding a piece
+## Admin uploads
 
-Upload the real audio or document files into the repository, then add an entry to **music.json**. Use one of these category IDs:
+GitHub Pages is static and cannot safely verify a password or commit uploaded files. The private admin backend is a Cloudflare Worker in `worker/`. Read [worker/README.md](worker/README.md) to deploy it. Keep all secrets in the Worker environment; do not put them in this repository. Choose a new admin password for the Worker rather than reusing one already shared in a chat.
 
-- `sheet-music`
-- `game-music`
-- `podcast-video`
-- `compositions`
-- `other`
+After deployment, set `window.CRIMSON_ADMIN_API` in `admin-config.js` to the Worker URL. The footer's small **a** opens the admin page. After sign-in, uploads are committed to the repository and added to `music.json`.
 
-Example entry:
-
-```json
-[
-  {
-    "id": "piece-id",
-    "title": "Piece title",
-    "category": "compositions",
-    "project": "Project name",
-    "description": "Optional description",
-    "date": "2026-11-19",
-    "genres": ["Orchestral", "Adventure"],
-    "audio": "music/audio/piece.mp3",
-    "score": "music/scores/piece.pdf",
-    "parts": [
-      {
-        "instrument": "French horn",
-        "file": "music/parts/piece-horn.pdf"
-      }
-    ],
-    "files": [
-      {
-        "label": "MIDI",
-        "file": "music/downloads/piece.mid"
-      }
-    ]
-  }
-]
-```
-
-Only include fields and files that actually exist. The audio, score, parts, and extra files are optional. For several pieces, put each entry in the same JSON array and separate entries with commas.
-
-The site is plain HTML, CSS, and JavaScript. It does not need a build step or third-party libraries.
+The site itself uses plain HTML, CSS and JavaScript and has no build step.
