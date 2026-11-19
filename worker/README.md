@@ -12,21 +12,31 @@ This is the private backend for the small admin link in the Crimson footer. GitH
 
 Files are limited to 8 MB each. Allowed file formats are MP3/WAV/OGG/M4A, PDF, MID/MIDI and MusicXML/XML.
 
-## Deploy
+## Browser-only setup (no command line required)
 
-1. Create a Cloudflare account and install Wrangler on a computer with Node.js.
-2. From this folder, run `npx wrangler login`.
-3. Create a fine-grained GitHub token for **only** `CaptainBensword/Crimson`, with **Contents: Read and write** permission. Do not put the token in this repository or in `admin-config.js`.
-4. Set the three Worker secrets:
-   - `npx wrangler secret put ADMIN_PASSWORD`
-   - `npx wrangler secret put SESSION_SECRET`
-   - `npx wrangler secret put GITHUB_TOKEN`
-5. For `ADMIN_PASSWORD`, choose a new password that has not been posted in a chat or committed to a file. For `SESSION_SECRET`, use a long random value. Paste the GitHub token only into the Wrangler secret prompt.
-6. Deploy with `npx wrangler deploy`.
-7. Copy the deployed Worker URL, open the repository's `admin-config.js`, and set `window.CRIMSON_ADMIN_API` to that URL. Commit the change.
-8. Visit Crimson, click the small **a** in the footer, and sign in with the password stored as the Worker secret.
+1. Open the Cloudflare dashboard and go to **Workers & Pages**.
+2. Create a new Worker named `crimson-admin-api`.
+3. In the Worker editor, replace the starter code with the contents of [src/index.js](src/index.js), then deploy it.
+4. Open the Worker **Settings → Variables and Secrets**.
+5. Add these plain-text variables:
+   - `REPO_OWNER` = `CaptainBensword`
+   - `REPO_NAME` = `Crimson`
+   - `REPO_BRANCH` = `main`
+   - `ALLOWED_ORIGIN` = `https://captainbensword.github.io`
+6. Add these as **secrets**, not plain-text variables:
+   - `ADMIN_PASSWORD` — choose a new password that has not been posted in a chat or committed to a file
+   - `SESSION_SECRET` — use a long, random value
+   - `GITHUB_TOKEN` — a fine-grained GitHub token for only `CaptainBensword/Crimson`, with **Contents: Read and write** permission
+7. Save the settings and redeploy the Worker.
+8. Copy the Worker URL ending in `.workers.dev`.
+9. Open `admin-config.js` in the GitHub editor and set `window.CRIMSON_ADMIN_API` to that Worker URL. Commit the change.
+10. Visit Crimson, click the small **a** in the footer, and sign in with the new password stored as the Worker secret.
 
-The configured allowed browser origin is `https://captainbensword.github.io`. If the site is moved to a custom domain, change `ALLOWED_ORIGIN` in `wrangler.toml` to that exact origin and redeploy.
+The configured allowed browser origin is `https://captainbensword.github.io`. If the site is moved to a custom domain, change `ALLOWED_ORIGIN` to that exact origin and redeploy.
+
+## Command-line alternative
+
+With Node.js installed, run `npx wrangler login` and `npx wrangler deploy` from this folder. Set the same values in `wrangler.toml` and add the three secrets with `npx wrangler secret put ADMIN_PASSWORD`, `npx wrangler secret put SESSION_SECRET`, and `npx wrangler secret put GITHUB_TOKEN`.
 
 ## Security notes
 
