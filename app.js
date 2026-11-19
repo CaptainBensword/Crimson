@@ -289,7 +289,7 @@
       ]);
       const central = joinBytes([
         new Uint8Array(u32(0x02014b50)), new Uint8Array(u16(20)), new Uint8Array(u16(20)), new Uint8Array(u16(0)),
-        new Uint8Array(u16(0)), new Uint8Array(u16(0)), new Uint8Array(u16(0)), new Uint8Array(u32(crc)),
+        new Uint8Array(u16(0)), new Uint8Array(u16(0)), new Uint8Array(u32(crc)),
         new Uint8Array(u32(data.length)), new Uint8Array(u32(data.length)), new Uint8Array(u16(name.length)),
         new Uint8Array(u16(0)), new Uint8Array(u16(0)), new Uint8Array(u16(0)), new Uint8Array(u32(0)),
         new Uint8Array(u32(offset)), name
