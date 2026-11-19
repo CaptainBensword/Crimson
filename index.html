@@ -3,145 +3,253 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#171717">
-  <meta name="description" content="Browse the Crimson music library.">
-  <title>Crimson — Library</title>
+  <meta name="theme-color" content="#0b0b0d">
+  <meta name="description" content="Crimson — an interactive index of rooms, experiments, and things to explore.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CRIMSON">
+  <meta property="og:description" content="An interactive index.">
+  <meta property="og:image" content="https://captainbensword.github.io/Crimson/crimson-card.svg">
+  <title>CRIMSON — Interactive Index</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preload" href="styles.css" as="style">
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
-<body id="top">
-  <a class="skip-link" href="#main">Skip to content</a>
+<body>
+  <div class="scroll-progress" id="scroll-progress"></div>
+  <canvas class="ambient-canvas" id="ambient-canvas" aria-hidden="true"></canvas>
+  <div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
 
-  <header class="site-header">
+  <header class="site-header" id="top">
     <div class="header-inner">
-      <a class="wordmark" href="./" aria-label="Crimson home">CRIMSON</a>
-      <nav class="main-nav" aria-label="Main navigation">
-        <a class="nav-link is-active" href="./" aria-current="page">Library</a>
-        <a class="nav-link" href="about.html">About</a>
+      <a class="wordmark" href="#top" aria-label="Crimson home">CRIMSON<span class="wordmark-dot">.</span></a>
+      <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+        <a href="#observatory">Observatory</a>
+        <a href="#workshop">Workshop</a>
+        <a href="#console">Console</a>
+        <a href="#about">About</a>
       </nav>
-      <label class="search-box" for="catalog-search">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
-        <input id="catalog-search" type="search" placeholder="Search the library" autocomplete="off">
-        <kbd>/</kbd>
-      </label>
+      <div class="header-actions">
+        <span class="system-status"><i></i> SYSTEM ONLINE</span>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme">
+          <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.2A8.5 8.5 0 0 1 8.8 3.8 8.6 8.6 0 1 0 20.2 15.2Z"/></svg>
+        </button>
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">
+          <span></span><span></span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <main id="main" class="page-shell">
-    <section class="page-heading">
-      <div>
-        <p class="eyebrow">CRIMSON / LIBRARY</p>
-        <h1 id="page-title">Library</h1>
-      </div>
-      <p class="page-note">Browse by collection or search for a piece</p>
-    </section>
-
-    <section class="collections-section" aria-labelledby="collections-title">
-      <div class="section-heading">
-        <h2 id="collections-title">Collections</h2>
-        <span class="section-kicker">BROWSE</span>
-      </div>
-
-      <div class="collection-grid">
-        <a class="collection-card" href="?category=sheet-music" data-collection="sheet-music">
-          <span class="collection-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M5 4.5h10a3 3 0 0 1 3 3v12H8a3 3 0 0 0-3 0z"></path><path d="M5 4.5v15M8 8h7M8 11h7M8 14h5"></path></svg>
-          </span>
-          <span class="collection-copy"><strong>Sheet Music</strong><small>Scores and individual parts</small></span>
-          <span class="collection-count" data-count-for="sheet-music">0</span>
-        </a>
-
-        <a class="collection-card" href="?category=game-music" data-collection="game-music">
-          <span class="collection-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M7.5 8h9a4 4 0 0 1 3.8 5.2l-1 3.1a2.4 2.4 0 0 1-3.9 1l-2.1-1.8h-2.6l-2.1 1.8a2.4 2.4 0 0 1-3.9-1l-1-3.1A4 4 0 0 1 7.5 8Z"></path><path d="M8 11v4M6 13h4M15.5 12h.01M18 14h.01"></path></svg>
-          </span>
-          <span class="collection-copy"><strong>Game Music</strong><small>Music written for games</small></span>
-          <span class="collection-count" data-count-for="game-music">0</span>
-        </a>
-
-        <a class="collection-card" href="?category=podcast-video" data-collection="podcast-video">
-          <span class="collection-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="13" rx="4"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"></path></svg>
-          </span>
-          <span class="collection-copy"><strong>Podcast &amp; Video</strong><small>Themes, intros and background music</small></span>
-          <span class="collection-count" data-count-for="podcast-video">0</span>
-        </a>
-
-        <a class="collection-card" href="?category=compositions" data-collection="compositions">
-          <span class="collection-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M4 6.5h16M4 12h16M4 17.5h16"></path><path d="M8 4v5M14 9.5v5M18 15v5"></path></svg>
-          </span>
-          <span class="collection-copy"><strong>Compositions</strong><small>Standalone pieces and studies</small></span>
-          <span class="collection-count" data-count-for="compositions">0</span>
-        </a>
-
-        <a class="collection-card" href="?category=other" data-collection="other">
-          <span class="collection-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"></rect><rect x="14" y="4" width="6" height="6" rx="1"></rect><rect x="4" y="14" width="6" height="6" rx="1"></rect><rect x="14" y="14" width="6" height="6" rx="1"></rect></svg>
-          </span>
-          <span class="collection-copy"><strong>Other</strong><small>Everything outside the main groups</small></span>
-          <span class="collection-count" data-count-for="other">0</span>
-        </a>
-      </div>
-    </section>
-
-    <section class="catalog-section" aria-labelledby="catalog-title">
-      <div class="catalog-heading">
-        <div>
-          <p class="eyebrow">THE CATALOG</p>
-          <h2 id="catalog-title">All music</h2>
+  <main>
+    <section class="hero section-wrap" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <div class="micro-label reveal"><span class="micro-line"></span> INTERACTIVE INDEX <span class="micro-number">NO. 001</span></div>
+        <h1 id="hero-title" class="hero-title reveal">CRIMSON<span class="hero-period">.</span></h1>
+        <div class="hero-lower reveal">
+          <p class="hero-description">A few rooms to explore.<br><span>Find something interesting.</span></p>
+          <div class="hero-buttons">
+            <a class="button button-primary" href="#observatory">ENTER THE INDEX <span aria-hidden="true">↘</span></a>
+            <button class="button button-quiet" type="button" data-open-console>OPEN CONSOLE <span aria-hidden="true">⌘</span></button>
+          </div>
         </div>
-        <label class="sort-control" for="sort-select">
-          <span>Sort</span>
-          <select id="sort-select">
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-            <option value="title">Title A–Z</option>
-          </select>
-        </label>
+        <div class="hero-meta reveal">
+          <div><span class="meta-label">CURRENT SECTION</span><strong>01 <i>/</i> 03</strong></div>
+          <div><span class="meta-label">LOCAL TIME</span><strong id="local-time">--:--:--</strong></div>
+          <div><span class="meta-label">STATUS</span><strong><b class="status-dot"></b> READY</strong></div>
+        </div>
       </div>
 
-      <div id="genre-filters" class="genre-filters" aria-label="Filter by genre" hidden></div>
-      <p id="result-count" class="result-count" aria-live="polite">Loading catalog…</p>
+      <div class="hero-art reveal" aria-label="Abstract animated Crimson core">
+        <div class="art-label art-label-top"><span>CORE / A</span><span>ACTIVE</span></div>
+        <div class="core-stage" id="core-stage">
+          <div class="core-grid"></div>
+          <div class="core-orbit orbit-one"><span class="orbit-node"></span></div>
+          <div class="core-orbit orbit-two"><span class="orbit-node"></span></div>
+          <div class="core-orbit orbit-three"><span class="orbit-node"></span></div>
+          <div class="core-ring ring-inner"></div>
+          <div class="core-object"><div class="core-facet"></div><div class="core-facet facet-two"></div><div class="core-center"></div></div>
+          <span class="core-cross cross-one"></span><span class="core-cross cross-two"></span>
+          <span class="core-coordinate coord-one">38° 14' N</span>
+          <span class="core-coordinate coord-two">117° 09' W</span>
+          <span class="core-coordinate coord-three">R / 001</span>
+        </div>
+        <div class="art-label art-label-bottom"><span>FIG. 001 — THE CORE</span><span class="art-live"><i></i> RUNNING</span></div>
+      </div>
 
-      <ol id="track-list" class="track-list"></ol>
+      <div class="hero-scroll"><span class="scroll-line"></span><span>SCROLL TO EXPLORE</span></div>
+      <div class="hero-index">C—001 <span>EST. UNKNOWN</span></div>
+    </section>
 
-      <div id="empty-state" class="empty-state" hidden>
-        <div class="empty-mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-        <h3 id="empty-title">Nothing here yet</h3>
-        <p id="empty-message">There are no pieces in this collection yet</p>
+    <div class="ticker" aria-label="Site sections">
+      <div class="ticker-track">
+        <span>OBSERVATORY <b>✳</b></span><span>WORKSHOP <b>✳</b></span><span>COMMAND CONSOLE <b>✳</b></span><span>HIDDEN ROOM <b>✳</b></span>
+        <span>OBSERVATORY <b>✳</b></span><span>WORKSHOP <b>✳</b></span><span>COMMAND CONSOLE <b>✳</b></span><span>HIDDEN ROOM <b>✳</b></span>
+      </div>
+    </div>
+
+    <section class="section-wrap observatory-section" id="observatory">
+      <div class="section-heading reveal">
+        <div>
+          <div class="micro-label"><span class="micro-line"></span> ROOM 01 <span class="micro-number">/ OBSERVATORY</span></div>
+          <h2>Look closer<span class="heading-period">.</span></h2>
+        </div>
+        <p>A small moving system. Change its orbit, pause it, or drag around the space.</p>
+      </div>
+
+      <div class="observatory-panel reveal">
+        <div class="observatory-topbar">
+          <div class="panel-id"><span class="panel-square"></span> OBSERVATION DECK <span class="panel-muted">/ LIVE MODEL</span></div>
+          <div class="panel-readout"><span id="orbit-state">IN MOTION</span><i></i> <span id="orbit-count">03 OBJECTS</span></div>
+        </div>
+        <div class="observatory-body">
+          <div class="orbit-viewport" id="orbit-viewport">
+            <canvas id="orbit-canvas" aria-label="Animated orbital system"></canvas>
+            <div class="orbit-corner-label">FIELD VIEW <span>DRAG TO ROTATE</span></div>
+            <div class="orbit-coords">X <span id="coord-x">000</span> / Y <span id="coord-y">000</span></div>
+          </div>
+          <aside class="observatory-aside">
+            <div class="aside-number">01 <span>—</span> ORBITAL STUDY</div>
+            <h3>Everything<br>in motion.</h3>
+            <p>This is a live little simulation, not a static picture. Its paths and speeds shift every time you change the model.</p>
+            <div class="orbit-stats">
+              <div><span>OBJECTS</span><strong>03</strong></div>
+              <div><span>PATHS</span><strong>03</strong></div>
+              <div><span>ENGINE</span><strong>CANVAS</strong></div>
+            </div>
+            <div class="aside-controls">
+              <button class="button button-primary button-small" id="orbit-toggle" type="button">PAUSE MODEL <span>Ⅱ</span></button>
+              <button class="button button-outline button-small" id="orbit-randomize" type="button">RESHUFFLE <span>↻</span></button>
+            </div>
+            <div class="aside-footnote"><span class="status-dot"></span> FRAME UPDATE <span id="frame-rate">60</span> FPS</div>
+          </aside>
+        </div>
       </div>
     </section>
 
-    <section id="about" class="about-strip">
-      <div>
-        <p class="eyebrow">ABOUT CRIMSON</p>
-        <h2>A home for music, scores and related files</h2>
+    <section class="section-wrap workshop-section" id="workshop">
+      <div class="section-heading reveal">
+        <div>
+          <div class="micro-label"><span class="micro-line"></span> ROOM 02 <span class="micro-number">/ WORKSHOP</span></div>
+          <h2>Make a color<span class="heading-period">.</span></h2>
+        </div>
+        <p>Build a palette, tweak the hue, and copy the result. The colors are yours to use.</p>
       </div>
-      <a class="text-link" href="about.html">About this library <span aria-hidden="true">→</span></a>
+
+      <div class="workshop-grid">
+        <div class="palette-panel reveal">
+          <div class="panel-header">
+            <div><span class="panel-kicker">PALETTE GENERATOR</span><h3 id="palette-name">After Hours</h3></div>
+            <span class="tiny-index">COL / 0<span id="palette-version">1</span></span>
+          </div>
+          <div class="palette-swatches" id="palette-swatches">
+            <button class="swatch" type="button" data-color-index="0" aria-label="Copy color 1"><span>#A63240</span></button>
+            <button class="swatch" type="button" data-color-index="1" aria-label="Copy color 2"><span>#D66B58</span></button>
+            <button class="swatch" type="button" data-color-index="2" aria-label="Copy color 3"><span>#E7B78C</span></button>
+            <button class="swatch" type="button" data-color-index="3" aria-label="Copy color 4"><span>#53616B</span></button>
+            <button class="swatch" type="button" data-color-index="4" aria-label="Copy color 5"><span>#20242B</span></button>
+          </div>
+          <div class="palette-actions">
+            <button class="button button-primary button-small" id="generate-palette" type="button">GENERATE NEW <span>✳</span></button>
+            <button class="button button-outline button-small" id="copy-palette" type="button">COPY ALL <span>⧉</span></button>
+          </div>
+          <div class="hue-control">
+            <label for="hue-slider">COLOR DIRECTION <strong id="hue-value">0°</strong></label>
+            <input id="hue-slider" type="range" min="0" max="359" value="0">
+            <div class="range-ends"><span>WARM</span><span>COOL</span></div>
+          </div>
+          <div class="palette-feedback" id="palette-feedback" aria-live="polite">Click any swatch to copy its hex value.</div>
+        </div>
+
+        <div class="workshop-side reveal">
+          <div class="color-preview" id="color-preview">
+            <div class="preview-grid"></div>
+            <div class="preview-orb"></div>
+            <div class="preview-caption"><span>LIVE PREVIEW</span><span id="preview-hex">#A63240</span></div>
+          </div>
+          <div class="snippet-panel">
+            <div class="snippet-title"><span>CSS VARIABLES</span><button id="copy-css" type="button">COPY CODE ↗</button></div>
+            <pre id="css-output">--color-01: #A63240;
+--color-02: #D66B58;
+--color-03: #E7B78C;
+--color-04: #53616B;
+--color-05: #20242B;</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-wrap console-section" id="console">
+      <div class="section-heading reveal">
+        <div>
+          <div class="micro-label"><span class="micro-line"></span> ROOM 03 <span class="micro-number">/ COMMAND CONSOLE</span></div>
+          <h2>Say something<span class="heading-period">.</span></h2>
+        </div>
+        <p>There are a few things this little console understands. Try <code>help</code>.</p>
+      </div>
+
+      <div class="terminal-panel reveal" id="terminal-panel">
+        <div class="terminal-topbar">
+          <div class="terminal-lights"><i></i><i></i><i></i></div>
+          <span>CRIMSON — LOCAL CONSOLE</span>
+          <span class="terminal-version">TTY / 01</span>
+        </div>
+        <div class="terminal-screen" id="terminal-screen" role="log" aria-live="polite">
+          <p class="terminal-line terminal-muted">CRIMSON INTERACTIVE CONSOLE [VERSION 1.0]</p>
+          <p class="terminal-line">Session started. Type <button class="inline-command" type="button" data-command="help">help</button> to see available commands.</p>
+        </div>
+        <form class="terminal-input-row" id="terminal-form" autocomplete="off">
+          <label for="terminal-input"><span>›</span></label>
+          <input id="terminal-input" name="command" type="text" spellcheck="false" placeholder="Enter a command..." aria-label="Enter a console command">
+          <kbd>ENTER ↵</kbd>
+        </form>
+        <div class="terminal-footer"><span><i></i> CONNECTION LOCAL</span><span>NO EXTERNAL REQUESTS</span></div>
+      </div>
+    </section>
+
+    <section class="section-wrap about-section" id="about">
+      <div class="about-card reveal">
+        <div class="about-graphic" aria-hidden="true">
+          <div class="about-graphic-ring ring-a"></div>
+          <div class="about-graphic-ring ring-b"></div>
+          <div class="about-graphic-core"></div>
+          <span class="about-graphic-cross">+</span>
+        </div>
+        <div class="about-copy">
+          <div class="micro-label"><span class="micro-line"></span> ABOUT THIS PLACE</div>
+          <h2>No instructions.<br>Just explore<span class="heading-period">.</span></h2>
+          <p>Crimson is a small interactive corner of the internet. A few experiments, a few details to find, and room for whatever comes next.</p>
+          <button class="text-button" type="button" id="redroom-open">THERE'S MORE <span>↗</span></button>
+        </div>
+        <div class="about-coordinate">CR—001<br><span>END OF INDEX</span></div>
+      </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="footer-inner">
-      <a class="footer-wordmark" href="./">CRIMSON</a>
-      <span>© 2026 Talon. Original music and scores. All rights reserved.</span>
-      <a href="#top" class="back-top">Back to top ↑</a>
-      <a class="admin-mark" href="admin.html" aria-label="Talon administration">a</a>
+    <div class="footer-main">
+      <a class="footer-wordmark" href="#top">CRIMSON<span>.</span></a>
+      <span class="footer-note">AN INTERACTIVE INDEX</span>
+      <a class="back-top" href="#top">BACK TO TOP ↑</a>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 TALON</span>
+      <span>BUILT FOR THE CURIOUS</span>
+      <span class="footer-coordinates">00° 00' 00" — 00° 00' 00"</span>
     </div>
   </footer>
 
-  <dialog id="track-dialog" class="track-dialog" aria-labelledby="dialog-title">
-    <div class="dialog-inner">
-      <div class="dialog-top">
-        <span class="dialog-label">CRIMSON / PIECE</span>
-        <button class="icon-button" id="dialog-close" type="button" aria-label="Close details">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
-        </button>
-      </div>
-      <div id="dialog-content"></div>
+  <div class="easter-egg" id="redroom" hidden role="dialog" aria-modal="true" aria-labelledby="redroom-title">
+    <div class="easter-egg-panel">
+      <button class="easter-close" id="redroom-close" type="button" aria-label="Close">×</button>
+      <div class="micro-label"><span class="micro-line"></span> UNLISTED ROOM / 00</div>
+      <h2 id="redroom-title">You found it<span class="heading-period">.</span></h2>
+      <p>Not everything needs a button. Some things are just here.</p>
+      <div class="egg-stamp">C<span>R</span></div>
+      <button class="button button-primary button-small" id="redroom-return" type="button">BACK TO THE INDEX <span>↗</span></button>
     </div>
-  </dialog>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
