@@ -24,12 +24,13 @@
       <nav class="side-nav" aria-label="Main navigation">
         <button class="nav-item active" data-view="overview"><span class="nav-icon">▦</span>Overview <kbd>01</kbd></button>
         <button class="nav-item" data-view="client"><span class="nav-icon">◈</span>Play <kbd>02</kbd></button>
-        <button class="nav-item" data-view="mods"><span class="nav-icon">⌘</span>Mods <kbd>03</kbd></button>
-        <button class="nav-item" data-view="appearance"><span class="nav-icon">▧</span>Appearance <kbd>04</kbd></button>
+        <button class="nav-item" data-view="servers"><span class="nav-icon">⌁</span>Servers <kbd>03</kbd></button>
+        <button class="nav-item" data-view="mods"><span class="nav-icon">⌘</span>Mods <kbd>04</kbd></button>
+        <button class="nav-item" data-view="appearance"><span class="nav-icon">▧</span>Appearance <kbd>05</kbd></button>
       </nav>
       <div class="sidebar-label sidebar-label-lower">PREFERENCES</div>
       <nav class="side-nav">
-        <button class="nav-item" data-view="settings"><span class="nav-icon">⚙</span>Settings <kbd>05</kbd></button>
+        <button class="nav-item" data-view="settings"><span class="nav-icon">⚙</span>Settings <kbd>06</kbd></button>
       </nav>
       <div class="sidebar-bottom">
         <div class="build-card">
@@ -146,7 +147,45 @@
         </div>
       </section>
 
-      <section class="view" id="view-mods">
+            <section class="view" id="view-servers">
+        <div class="page-heading compact-heading">
+          <div><p class="eyebrow"><span class="eyebrow-line"></span> MULTIPLAYER / SAVED ADDRESSES</p><h1>Server <em>list</em></h1><p class="heading-sub">The same addresses are added to the patched game's Multiplayer screen</p></div>
+          <div class="heading-stamp"><span>WSS</span><b>04</b><small>SAVED SERVERS</small></div>
+        </div>
+        <div class="servers-grid">
+          <article class="server-card server-card-featured">
+            <div class="server-card-head"><span>01 / TALON</span><span class="server-label">YOUR SERVER</span></div>
+            <h2>Talon</h2>
+            <p>Your Talon server address</p>
+            <code class="server-address">wss://talon.mybothosting.com/</code>
+            <button class="btn btn-primary copy-server" data-address="wss://talon.mybothosting.com/" data-name="Talon">COPY ADDRESS <span>↗</span></button>
+          </article>
+          <article class="server-card">
+            <div class="server-card-head"><span>02 / COMMUNITY</span><span class="server-label">SAVED</span></div>
+            <h2>Archyverse</h2>
+            <p>Community server</p>
+            <code class="server-address">wss://mc.archyverse.org/</code>
+            <button class="btn btn-secondary copy-server" data-address="wss://mc.archyverse.org/" data-name="Archyverse">COPY ADDRESS <span>↗</span></button>
+          </article>
+          <article class="server-card">
+            <div class="server-card-head"><span>03 / COMMUNITY</span><span class="server-label">SAVED</span></div>
+            <h2>GenericSMP</h2>
+            <p>Community survival server</p>
+            <code class="server-address">wss://genericsmp.eagler.host/</code>
+            <button class="btn btn-secondary copy-server" data-address="wss://genericsmp.eagler.host/" data-name="GenericSMP">COPY ADDRESS <span>↗</span></button>
+          </article>
+          <article class="server-card">
+            <div class="server-card-head"><span>04 / ORIGINAL</span><span class="server-label">KEPT</span></div>
+            <h2>ArchMC</h2>
+            <p>Kept from the Eaglercraft file you sent</p>
+            <code class="server-address">wss://arch.mc/</code>
+            <button class="btn btn-secondary copy-server" data-address="wss://arch.mc/" data-name="ArchMC">COPY ADDRESS <span>↗</span></button>
+          </article>
+        </div>
+        <div class="server-note"><b>ABOUT THESE ADDRESSES</b><p>These are saved connection addresses, not live status checks. A server may be offline or require a different Eaglercraft version. Open Play to launch your client.</p><button class="text-action" data-go="client">GO TO CLIENT SETUP <span>→</span></button></div>
+      </section>
+
+<section class="view" id="view-mods">
         <div class="page-heading compact-heading">
           <div><p class="eyebrow"><span class="eyebrow-line"></span> IN-GAME FEATURES</p><h1>Mod <em>library</em></h1><p class="heading-sub">Small tools that stay out of your way</p></div>
           <div class="heading-stamp"><span>PACK</span><b>005</b><small>CRIMSON ESSENTIALS</small></div>
@@ -154,12 +193,13 @@
         <div class="mods-toolbar"><div><span class="toolbar-label">CRIMSON ESSENTIALS</span><p>The Crimson patcher bundles these features into your patched client</p></div><a class="btn btn-primary" href="mods/crimson-mod-pack.json" download>DOWNLOAD MOD PACK <span>↓</span></a></div>
         <div class="mods-grid">
           <article class="mod-card"><div class="mod-card-top"><span class="mod-number">01</span><span class="mod-status">BUNDLED</span></div><div class="mod-icon icon-fps">FPS</div><h3>Crimson HUD</h3><p>FPS, frame time, keystrokes, and CPS in movable overlays</p><div class="mod-tags"><span>HUD</span><span>INPUT</span></div></article>
-          <article class="mod-card"><div class="mod-card-top"><span class="mod-number">02</span><span class="mod-status">BUNDLED</span></div><div class="mod-icon">UI</div><h3>Crimson Interface</h3><p>A dark red theme for the in-game F6 mod manager</p><div class="mod-tags"><span>INTERFACE</span><span>THEME</span></div></article>
+          <article class="mod-card"><div class="mod-card-top"><span class="mod-number">02</span><span class="mod-status">BUNDLED</span></div><div class="mod-icon">UI</div><h3>Crimson Interface</h3><p>A dark red theme for the in-game Right Shift mod panel</p><div class="mod-tags"><span>INTERFACE</span><span>THEME</span></div></article>
           <article class="mod-card"><div class="mod-card-top"><span class="mod-number">03</span><span class="mod-status">BUNDLED</span></div><div class="mod-icon icon-sprint">»</div><h3>Toggle Sprint</h3><p>Keep sprint held with a configurable key combination</p><div class="mod-tags"><span>MOVEMENT</span><span>KEYBIND</span></div></article>
-          <article class="mod-card"><div class="mod-card-top"><span class="mod-number">04</span><span class="mod-status">READY TO IMPORT</span></div><div class="mod-icon icon-crosshair">⌖</div><h3>Crimson Crosshair</h3><p>A clean center reticle with adjustable size, gap, and color</p><div class="mod-tags"><span>VISUAL</span><span>CONFIG</span></div></article>
-          <article class="mod-card mod-card-wide"><div class="mod-card-top"><span class="mod-number">05</span><span class="mod-status">RESOURCE PACK</span></div><div class="mod-wide-art"><div class="texture-tile tile-stone"></div><div class="texture-tile tile-grass"></div><div class="texture-tile tile-wood"></div><div class="texture-tile tile-crystal"></div></div><div><h3>Crimson Textures</h3><p>Original 16×16 block textures — stone, grass, oak, obsidian, and more</p><button class="text-action" id="download-textures">BUILD RESOURCE PACK <span>↓</span></button></div></article>
+          <article class="mod-card"><div class="mod-card-top"><span class="mod-number">04</span><span class="mod-status">BUNDLED</span></div><div class="mod-icon icon-crosshair">⌖</div><h3>Crimson Crosshair</h3><p>A clean center reticle with adjustable size, gap, and color</p><div class="mod-tags"><span>VISUAL</span><span>CONFIG</span></div></article>
+          <article class="mod-card"><div class="mod-card-top"><span class="mod-number">05</span><span class="mod-status">BUNDLED</span></div><div class="mod-icon">F8</div><h3>Crimson Screenshot</h3><p>Save a game screenshot with one key press</p><div class="mod-tags"><span>CAPTURE</span><span>KEYBIND</span></div></article>
+          <article class="mod-card mod-card-wide"><div class="mod-card-top"><span class="mod-number">06</span><span class="mod-status">RESOURCE PACK</span></div><div class="mod-wide-art"><div class="texture-tile tile-stone"></div><div class="texture-tile tile-grass"></div><div class="texture-tile tile-wood"></div><div class="texture-tile tile-crystal"></div></div><div><h3>Crimson Textures</h3><p>Original 16×16 block textures — stone, grass, oak, obsidian, and more</p><button class="text-action" id="download-textures">BUILD RESOURCE PACK <span>↓</span></button></div></article>
         </div>
-        <div class="import-help"><span class="help-key">F6</span><div><b>Import inside the game</b><p>Launch your patched client → press F6 to open the Crimson mod menu and configure the HUD, crosshair, and sprint</p></div></div>
+        <div class="import-help"><span class="help-key">RIGHT SHIFT</span><div><b>Open the mod panel</b><p>Switch the built-in features on or off. Import .js mods or .json bundles made for the EaglerLite API in local singleplayer worlds only. Forge, Fabric, .jar files, and other Minecraft versions are not compatible with this 1.12.2 client.</p></div></div>
       </section>
 
       <section class="view" id="view-appearance">
