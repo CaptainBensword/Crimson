@@ -2096,6 +2096,7 @@ function persistEnabled(id, on) {
   if (!ok) { try { if (window.opener) window.opener.postMessage({ type: 'el:mod-state', id: id, enabled: on }, '*'); } catch (e1) {} }
 }
 function setEnabled(mod, on) {
+  if (!on && mod._crimsonSingleplayerOnly) mod._crimsonResumeOnLocal = false;
   if (on && mod._crimsonSingleplayerOnly && !isCrimsonSingleplayer()) {
     toast('This uploaded mod is available in singleplayer worlds only', 3200, 'err');
     return;
@@ -2186,15 +2187,41 @@ function loadPendingCustomMods() {
   for (var i = 0; i < pending.length; i++) addModScript(pending[i]);
   if (_winOpen) renderWinList();
 }
-function disableCustomMods() {
+function suspendCustomMods() {
   for (var i = 0; i < EL.mods.length; i++) {
     var mod = EL.mods[i];
-    if (mod._crimsonSingleplayerOnly && mod.enabled) setEnabled(mod, false);
+    if (!mod._crimsonSingleplayerOnly || !mod.enabled) continue;
+    mod._crimsonResumeOnLocal = true;
+    try { if (typeof mod._onDisable === 'function') mod._onDisable(); } catch (e0) {}
+    try { if (mod._facade) mod._facade._detach(); } catch (e1) {}
+    mod._onDisable = null;
+    mod._onEnable = null;
+    mod._initialized = false;
+    mod.enabled = false;
+    emit('mod:disabled', { id: mod.id, suspended: true });
   }
+  if (_winOpen) renderWinList();
+}
+function resumeCustomMods() {
+  if (!isCrimsonSingleplayer()) return;
+  loadPendingCustomMods();
+  for (var i = 0; i < EL.mods.length; i++) {
+    var mod = EL.mods[i];
+    if (mod._crimsonSingleplayerOnly && mod._crimsonResumeOnLocal) {
+      mod._crimsonResumeOnLocal = false;
+      mod.enabled = true;
+      runModInit(mod);
+      emit('mod:enabled', { id: mod.id });
+    }
+  }
+  if (_winOpen) renderWinList();
 }
 function addModScript(m) {
   if (!m || !m.id || !m.code || typeof m.code !== 'string') return;
-  try { if (m.enabled === true || m.enabled === false) lsSet('elmod:state:' + m.id, m.enabled ? '1' : '0'); } catch (eS) {}
+  try {
+    var savedState = lsGet('elmod:state:' + m.id, null);
+    if (savedState === null && (m.enabled === true || m.enabled === false)) lsSet('elmod:state:' + m.id, m.enabled ? '1' : '0');
+  } catch (eS) {}
   try {
     var s = document.createElement('script');
     s.id = 'el-mod-' + String(m.id).replace(/[^a-zA-Z0-9_-]/g, '');
@@ -2698,15 +2725,15 @@ try { Object.defineProperty(window, 'EaglerLite', { value: EL, writable: true, c
 
 EL.events.on('net:open', function() {
   _crimsonExternalSession = true;
-  disableCustomMods();
+  suspendCustomMods();
 });
 EL.events.on('net:connected', function() {
   _crimsonExternalSession = true;
-  disableCustomMods();
+  suspendCustomMods();
 });
-EL.events.on('game:world-enter', function() { loadPendingCustomMods(); });
+EL.events.on('game:world-enter', function() { resumeCustomMods(); });
 EL.events.on('game:world-exit', function() {
-  disableCustomMods();
+  suspendCustomMods();
   _crimsonExternalSession = false;
 });
 EL.events.on('game:title', function() { _crimsonExternalSession = false; });
