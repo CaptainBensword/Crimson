@@ -1,22 +1,30 @@
 # Crimson Client
 
-Crimson is a browser-based client setup for **Eaglercraft 1.12.2**. It has a patcher, an in-game mod panel, five bundled quality-of-life features, a server list, and an original resource pack builder.
+Crimson is a browser-based Eaglercraft 1.12.2 client by Talon. The site opens the actual game in-place; it is not a separate launcher window.
 
-The game itself is not included. Use a standalone EaglercraftX 1.12.2 JavaScript HTML file that you are entitled to use.
+## First launch
 
-## Set up the client
+1. Open the Crimson Client site.
+2. Choose your standalone Eaglercraft 1.12.2 HTML file (the clean file you are entitled to use).
+3. Crimson injects its EaglerLite API, server list, and bundled client-side modules, then saves the resulting HTML in this browser's IndexedDB.
+4. From then on, opening the site starts the game directly. The game file is kept in this browser and is not uploaded to Crimson's website.
 
-1. Open the [Crimson Client site](https://captainbensword.github.io/Crimson/).
-2. Go to **Play → Open Crimson Patcher**.
-3. Select the clean standalone Eaglercraft 1.12.2 HTML file.
-4. Download the patched HTML.
-5. Return to **Play**, import the patched HTML, and select **Launch Client**.
+The first import is required because the game engine is user-supplied and is not stored in this repository. Each browser/device needs its own initial import.
 
-Crimson keeps the patched file in this browser's IndexedDB. It does not upload your game file to a server.
+## Playing
 
-## In-game controls
+The embedded game is the Eaglercraft 1.12.2 client itself. Use its normal Minecraft main menu for singleplayer, multiplayer, controls, options, and resource packs. The Crimson patch adds these multiplayer entries:
 
-Press **Right Shift** to open or close the mod panel. Each listed module has an ON/OFF control; modules with extra settings also have a Config button.
+- Talon — wss://talon.mybothosting.com/
+- Archyverse — wss://mc.archyverse.org/
+- GenericSMP — wss://genericsmp.eagler.host/
+- ArchMC — wss://arch.mc/
+
+These are saved addresses, not live status checks. A server may be offline or require another version.
+
+## Crimson controls
+
+Click the small Crimson tab in the top-left corner to open the client controls. Right Shift opens the in-game mod panel directly.
 
 | Module | What it does | Default |
 | --- | --- | --- |
@@ -26,39 +34,20 @@ Press **Right Shift** to open or close the mod panel. Each listed module has an 
 | Toggle Sprint | Toggle sprint with Ctrl + Shift + G | Off |
 | Crimson Screenshot | Save a screenshot with F8 | On |
 
-Use **Arrange HUD** in the panel to move supported HUD widgets.
+Use Arrange HUD in the mod panel to move supported HUD widgets.
 
-## Mod uploads
+Custom mod uploads are for local singleplayer worlds only. The panel accepts EaglerLite API JavaScript mods (.js) and JSON bundles (.json), up to 2 MB per file. This is not Forge or Fabric and does not load Java .jar files or arbitrary mods from other Minecraft versions. Only import scripts from sources you trust.
 
-Custom uploads are for **local singleplayer worlds only**. The panel accepts EaglerLite API JavaScript mods (.js) and EaglerLite JSON bundles (.json), up to 2 MB per file. Saved custom mods are held back outside singleplayer, and enabled custom mods are suspended when leaving the local world.
+## Textures
 
-This client is not Forge or Fabric and does not load Java .jar files, .class files, or arbitrary mods for other Minecraft versions. Mods must be written for the EaglerLite API used by this 1.12.2 JavaScript build. Imported scripts run in the game page, so only import code from sources you trust.
+Open the Crimson tab and choose Crimson textures to build an original 16x resource pack with new block and sword textures. Import the resulting Crimson-Resource-Pack-1.12.zip in Minecraft's Options → Resource Packs menu.
 
-## Servers
+## Technical notes
 
-The patcher adds these addresses to the game's Multiplayer list and preserves server entries already present in the original file.
-
-- Talon — wss://talon.mybothosting.com/
-- Archyverse — wss://mc.archyverse.org/
-- GenericSMP — wss://genericsmp.eagler.host/
-- ArchMC — wss://arch.mc/ (kept from the source client)
-
-The [Servers page](https://captainbensword.github.io/Crimson/#servers) also displays the addresses for copying. These are saved addresses, not live server status checks.
-
-## Resource pack
-
-Open **Appearance → Build Resource Pack** to create Crimson-Resource-Pack-1.12.zip. It includes original 16×16 textures for stone, cobblestone, dirt, grass, oak planks, obsidian, and netherrack, plus a 1.12-compatible pack.mcmeta.
-
-Import the ZIP through the game's Resource Packs screen.
-
-## Project files
-
-- index.html, styles.css, app.js — launcher, local client storage, server directory, and resource pack builder
-- patcher.html — EaglerLite API patcher with Crimson modules and server defaults
+- index.html, styles.css, app.js — direct in-page game surface, first-run import, local storage, and texture pack builder
+- patcher.html — EaglerLite API patch engine and bundled Crimson modules
 - mods/crimson-mod-pack.json — separate EaglerLite mod bundle
 - licenses/EaglerLite-API-APACHE-2.0.txt — EaglerLite API license
 - THIRD_PARTY_NOTICES.md — third-party attribution
 
-## Worlds and storage
-
-Worlds and game settings are stored by the game in browser storage. Export worlds as EPK files from inside the game if you need a backup. Removing the saved HTML from Crimson does not delete the game's own world storage.
+Worlds and game settings are stored by the game in browser storage. Export worlds from inside the game if you need a backup. Removing the saved client file does not delete worlds.
