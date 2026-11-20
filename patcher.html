@@ -74,7 +74,7 @@ Right Shift opens the in-game mod panel. Custom EaglerLite JavaScript modules ma
     <div class="status" id="status">Waiting for a clean 1.12.2 HTML file</div>
   </section>
 </div>
-<p style='max-width:760px;margin:0 auto;color:#806c72;font:9px ui-monospace,monospace;line-height:1.7'>CRIMSON PATCHER · MOD LOADER BY EAGLERLITE · <a href='./#client' style='color:#d97884'>BACK TO CRIMSON CLIENT ↗</a></p>
+<p style='max-width:760px;margin:0 auto;color:#806c72;font:9px ui-monospace,monospace;line-height:1.7'>CRIMSON PATCHER · MOD LOADER BY EAGLERLITE · <a href='./' style='color:#d97884'>BACK TO CRIMSON CLIENT ↗</a></p>
 <script>
 function EaglerLiteModAPI(BOOT) {
 'use strict';
@@ -2838,6 +2838,7 @@ var PATCH_BOOT = {"ver":"3.0.2","opts":{"servers":[{"addr":"wss://talon.mybothos
     setTimeout(function () { try { URL.revokeObjectURL(url); } catch (e) {} }, 60000);
     setStatus(w ? 'Launched the patched copy in a new tab.' : 'Pop-up blocked - use Download instead.', w ? 'ok' : 'err');
   });
+window.CrimsonPatcher = { patch: patch, version: PATCH_BOOT.ver };
 })();
 </script>
 </body>
