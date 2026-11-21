@@ -81,3 +81,138 @@ h1 span { color: #e45a6c; }
   .install-foot { font-size: 7px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+
+/* Talon boot screen */
+.boot-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 43%, rgba(115, 20, 39, .34), transparent 38%),
+    radial-gradient(ellipse at 50% 0%, rgba(76, 17, 31, .48), transparent 54%),
+    linear-gradient(145deg, #10090d 0%, #08080a 58%, #12090e 100%);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .42s ease, visibility .42s ease;
+}
+.boot-screen.is-leaving { opacity: 0; visibility: hidden; pointer-events: none; }
+.boot-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .23;
+  background-image:
+    linear-gradient(115deg, transparent 0 46%, rgba(211, 49, 70, .24) 46.1%, transparent 46.35%),
+    linear-gradient(65deg, transparent 0 61%, rgba(211, 49, 70, .16) 61.1%, transparent 61.35%),
+    repeating-linear-gradient(0deg, transparent 0 47px, rgba(255,255,255,.025) 48px, transparent 49px);
+  mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent);
+}
+.boot-screen::after {
+  content: "";
+  position: absolute;
+  width: min(76vw, 820px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(196, 49, 69, .11);
+  border-radius: 50%;
+  box-shadow: 0 0 0 54px rgba(196,49,69,.025), 0 0 0 108px rgba(196,49,69,.018);
+  animation: boot-orbit 18s linear infinite;
+}
+.boot-sweep {
+  position: absolute;
+  top: -20%;
+  width: 1px;
+  height: 140%;
+  background: linear-gradient(transparent, rgba(208,61,80,.52), transparent);
+  opacity: .5;
+  transform: rotate(34deg);
+}
+.boot-sweep-left { left: 17%; }
+.boot-sweep-right { right: 17%; transform: rotate(-34deg); opacity: .25; }
+.boot-center {
+  position: relative;
+  z-index: 1;
+  width: min(560px, calc(100vw - 44px));
+  margin-top: -3vh;
+  text-align: center;
+}
+.boot-mark {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0 auto 19px;
+  transform: skew(-13deg);
+  filter: drop-shadow(0 0 13px rgba(220,55,76,.35));
+}
+.boot-mark i {
+  display: block;
+  width: 9px;
+  height: 31px;
+  background: linear-gradient(180deg, #f27b87, #9d2037);
+  clip-path: polygon(0 0,100% 0,100% 76%,50% 100%,0 76%);
+}
+.boot-mark i:nth-child(2) { height: 44px; background: linear-gradient(180deg, #ff9ba2, #c52d46); }
+.boot-mark i:nth-child(3) { height: 24px; background: linear-gradient(180deg, #c43d53, #641529); }
+.boot-wordmark {
+  color: #fff5f5;
+  font: 900 clamp(64px, 13vw, 116px)/.82 Impact, "Arial Black", Arial, sans-serif;
+  letter-spacing: .17em;
+  text-indent: .17em;
+  text-shadow: 0 0 32px rgba(222,66,86,.25), 0 5px 0 rgba(0,0,0,.4);
+}
+.boot-clientline {
+  margin-top: 19px;
+  color: #ce8b94;
+  font: 800 10px var(--mono);
+  letter-spacing: .27em;
+}
+.boot-clientline span { margin-left: 9px; color: #80505a; }
+.boot-meter {
+  width: min(310px, 74vw);
+  height: 3px;
+  margin: 48px auto 10px;
+  overflow: hidden;
+  background: #382029;
+  box-shadow: 0 0 18px rgba(194,42,63,.14);
+}
+.boot-meter span {
+  display: block;
+  width: 8%;
+  height: 100%;
+  background: linear-gradient(90deg, #8c1b32, #fa7886);
+  box-shadow: 0 0 12px rgba(241,91,111,.7);
+  transition: width .48s cubic-bezier(.2,.75,.25,1);
+}
+.boot-readout {
+  width: min(310px, 74vw);
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  color: #92717a;
+  font: 8px var(--mono);
+  letter-spacing: .18em;
+}
+.boot-readout span:last-child { color: #d46b78; font-variant-numeric: tabular-nums; }
+.boot-signature, .boot-index {
+  position: absolute;
+  z-index: 1;
+  bottom: max(22px, env(safe-area-inset-bottom));
+  color: #72535c;
+  font: 8px var(--mono);
+  letter-spacing: .2em;
+}
+.boot-signature { left: max(24px, env(safe-area-inset-left)); }
+.boot-index { right: max(24px, env(safe-area-inset-right)); color: #553741; }
+@keyframes boot-orbit { to { transform: rotate(360deg); } }
+@media (max-width: 520px) {
+  .boot-signature, .boot-index { font-size: 7px; letter-spacing: .12em; }
+  .boot-meter { margin-top: 38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .boot-screen::after { animation: none; }
+  .boot-meter span { transition: none; }
+}
