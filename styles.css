@@ -216,3 +216,28 @@ h1 span { color: #e45a6c; }
   .boot-screen::after { animation: none; }
   .boot-meter span { transition: none; }
 }
+
+
+/* Staggered arrival for the Talon mark */
+.boot-mark { animation: boot-mark-arrive .72s cubic-bezier(.16,.8,.24,1) both; }
+.boot-wordmark { animation: boot-title-arrive .86s .08s cubic-bezier(.16,.8,.24,1) both; }
+.boot-clientline { animation: boot-rise .7s .18s ease both; }
+.boot-meter { animation: boot-rise .7s .26s ease both; }
+.boot-readout { animation: boot-rise .7s .32s ease both; }
+.boot-signature, .boot-index { animation: boot-fade .9s .42s ease both; }
+@keyframes boot-mark-arrive {
+  from { opacity: 0; transform: translateY(13px) skew(-13deg) scale(.86); filter: drop-shadow(0 0 0 rgba(220,55,76,0)); }
+  to { opacity: 1; transform: translateY(0) skew(-13deg) scale(1); filter: drop-shadow(0 0 13px rgba(220,55,76,.35)); }
+}
+@keyframes boot-title-arrive {
+  from { opacity: 0; transform: translateY(17px) scale(.94); filter: blur(7px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes boot-rise {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes boot-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
