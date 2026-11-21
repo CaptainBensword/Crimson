@@ -12,6 +12,19 @@
 </head>
 <body>
   <main id="client-root">
+    <section id="boot-screen" class="boot-screen" role="status" aria-label="Talon loading">
+      <div class="boot-sweep boot-sweep-left" aria-hidden="true"></div>
+      <div class="boot-sweep boot-sweep-right" aria-hidden="true"></div>
+      <div class="boot-center">
+        <div class="boot-mark" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="boot-wordmark">TALON</div>
+        <div class="boot-clientline">CRIMSON CLIENT <span>1.12.2</span></div>
+        <div class="boot-meter"><span id="boot-progress"></span></div>
+        <div class="boot-readout"><span id="boot-stage">INITIALIZING</span><span id="boot-percent">00</span></div>
+      </div>
+      <div class="boot-signature">A TALON PROJECT</div>
+      <div class="boot-index" aria-hidden="true">TC / 112</div>
+    </section>
     <iframe id="game-frame" title="Crimson Client — Eaglercraft 1.12.2"
       allow="fullscreen; gamepad; clipboard-read; clipboard-write; pointer-lock"
       allowfullscreen hidden></iframe>
@@ -23,17 +36,17 @@
           <span>CRIMSON<span class="brand-sub">CLIENT / TALON</span></span>
         </div>
         <div class="install-rule"></div>
-        <p class="eyebrow">EAGLERCRAFT 1.12.2</p>
-        <h1 id="install-title">Your game.<br><span>Your client.</span></h1>
-        <p class="install-copy">Load your standalone Eaglercraft 1.12.2 HTML file once. Crimson adds its in-game tools and server list, saves the client in this browser, and opens straight into Minecraft next time.</p>
+        <p class="eyebrow">MINECRAFT 1.12.2</p>
+        <h1 id="install-title">CRIMSON<br><span>CLIENT</span></h1>
+        <p class="install-copy">Choose your Eaglercraft HTML once — Crimson keeps the game on this device and opens it here next time</p>
         <label class="file-drop" id="file-drop" tabindex="0" role="button" aria-controls="client-file">
           <span class="drop-glyph">＋</span>
-          <strong>Choose your Eaglercraft HTML</strong>
-          <small>Drop the file here or click to browse · the file stays on this device</small>
+          <strong>Choose game file</strong>
+          <small>Drop your HTML here or click to browse</small>
         </label>
         <input id="client-file" type="file" accept=".html,.htm,text/html" hidden>
-        <div class="install-status" id="install-status" role="status" aria-live="polite">Waiting for a game file</div>
-        <div class="install-foot"><span>LOCAL STORAGE ONLY</span><span>CRIMSON BUILD 0.2</span></div>
+        <div class="install-status" id="install-status" role="status" aria-live="polite">No game installed yet</div>
+        <div class="install-foot"><span>LOCAL GAME STORAGE</span><span>CRIMSON BUILD 0.3</span></div>
       </div>
     </section>
 
