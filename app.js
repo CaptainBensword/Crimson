@@ -3,6 +3,12 @@
 
   const $ = (selector, root) => (root || document).querySelector(selector);
   const frame = $("#game-frame");
+  const bootScreen = $("#boot-screen");
+  const bootStage = $("#boot-stage");
+  const bootPercent = $("#boot-percent");
+  const bootProgress = $("#boot-progress");
+  const bootStartedAt = Date.now();
+  let bootFinished = false;
   const installView = $("#install-view");
   const fileInput = $("#client-file");
   const fileDrop = $("#file-drop");
@@ -15,6 +21,25 @@
   let gameUrl = null;
   let toastTimer = 0;
   let patcherPromise = null;
+
+  function setBootProgress(stage, percent) {
+    if (!bootScreen) return;
+    const value = Math.max(0, Math.min(100, Number(percent) || 0));
+    if (bootStage) bootStage.textContent = stage;
+    if (bootPercent) bootPercent.textContent = String(Math.round(value)).padStart(2, "0");
+    if (bootProgress) bootProgress.style.width = value + "%";
+  }
+
+  function finishBootScreen() {
+    if (!bootScreen || bootFinished) return;
+    bootFinished = true;
+    const delay = Math.max(0, 1250 - (Date.now() - bootStartedAt));
+    window.setTimeout(() => {
+      setBootProgress("CLIENT READY", 100);
+      bootScreen.classList.add("is-leaving");
+      window.setTimeout(() => { bootScreen.hidden = true; }, 450);
+    }, delay);
+  }
 
   function notify(message) {
     const box = $("#client-toast");
@@ -76,11 +101,18 @@
   }
 
   function startGame(blob) {
-    if (!(blob instanceof Blob)) throw new Error("The saved game file is missing.");
+    if (!(blob instanceof Blob)) throw new Error("The saved game file is missing");
     if (gameUrl) URL.revokeObjectURL(gameUrl);
     gameUrl = URL.createObjectURL(blob);
     frame.onload = () => {
-      try { frame.contentWindow.focus(); } catch (_) {}
+      try {
+        const gameDocument = frame.contentDocument;
+        const skip = gameDocument && gameDocument.getElementById("skipCountdown");
+        if (skip) skip.click();
+        frame.contentWindow.focus();
+      } catch (_) {}
+      setBootProgress("CLIENT READY", 100);
+      finishBootScreen();
     };
     frame.hidden = false;
     frame.src = gameUrl;
@@ -106,7 +138,7 @@
           }
         } catch (error) {
           settled = true;
-          reject(new Error("Crimson could not access its patch engine. Reload the page and try again."));
+          reject(new Error("Crimson could not access its patch engine — reload and try again"));
           return;
         }
         setTimeout(finish, 60);
@@ -116,7 +148,7 @@
       setTimeout(() => {
         if (!settled) {
           settled = true;
-          reject(new Error("Crimson's patch engine did not load. Check that patcher.html is available."));
+          reject(new Error("Crimson's patch engine did not load"));
         }
       }, 15000);
     });
@@ -126,7 +158,7 @@
   async function installFile(file) {
     if (!file) return;
     if (!/\.html?$/i.test(file.name)) {
-      setStatus("Choose the standalone .html game file.", "error");
+      setStatus("Choose the standalone HTML game file", "error");
       return;
     }
     if (file.size < 2000000) {
@@ -141,7 +173,7 @@
     try {
       const source = await file.text();
       if (!source.includes("1.12.2") || !source.includes("eaglercraftXOpts")) {
-        throw new Error("This does not look like a standalone Eaglercraft 1.12.2 HTML client.");
+        throw new Error("This is not an Eaglercraft 1.12.2 HTML client");
       }
 
       let patched = source;
@@ -408,15 +440,21 @@
   }
 
   async function bootSavedClient() {
+    setBootProgress("CHECKING LOCAL CLIENT", 22);
     try {
       const record = await getSavedClient();
       if (record && record.blob) {
+        setBootProgress("OPENING MINECRAFT", 72);
         startGame(record.blob);
       } else {
-        showInstaller("Choose your standalone Eaglercraft 1.12.2 HTML file.");
+        setBootProgress("READY FOR GAME FILE", 100);
+        showInstaller("Choose your Eaglercraft HTML file");
+        finishBootScreen();
       }
     } catch (error) {
-      showInstaller(error && error.message ? error.message : "Browser storage is unavailable.", "error");
+      setBootProgress("LOCAL STORAGE CHECK", 100);
+      showInstaller(error && error.message ? error.message : "Browser storage is unavailable", "error");
+      finishBootScreen();
     }
   }
 
